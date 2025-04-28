@@ -99,17 +99,17 @@ const styles = StyleSheet.create({
   },
   gradient: {
     position: "absolute",
-    top: -64, // Make the gradient taller
+    top: -64,
     left: 0,
     right: 0,
-    height: 64, // Make the gradient taller
+    height: 64,
     zIndex: 1,
   },
   container: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    paddingBottom: 18,
+    paddingBottom: 10,
     paddingTop: 12,
     backgroundColor: BACKGROUND_MAIN,
     zIndex: 2,
