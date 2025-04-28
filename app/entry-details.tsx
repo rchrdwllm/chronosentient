@@ -1,0 +1,154 @@
+import React, { useRef } from "react";
+import { View, StyleSheet, Pressable, Animated, TextInput } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import Text from "@/components/Text";
+import { ChevronLeft, Trash2, Check } from "lucide-react-native";
+import {
+  BACKGROUND_MAIN,
+  TEXT_PRIMARY,
+  TEXT_TERTIARY,
+  PRIMARY,
+  TEXT_SECONDARY,
+  NEGATIVE,
+} from "@/constants/colors";
+
+function AnimatedIconButton({ onPress, children, style }: any) {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.92,
+      useNativeDriver: true,
+      speed: 30,
+      bounciness: 6,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 30,
+      bounciness: 6,
+    }).start();
+  };
+
+  return (
+    <Animated.View style={[{ transform: [{ scale }] }, style]}>
+      <View
+        onTouchStart={handlePressIn}
+        onTouchEnd={handlePressOut}
+        onTouchCancel={handlePressOut}
+        onTouchMove={handlePressOut}
+        onStartShouldSetResponder={() => true}
+        onResponderRelease={onPress}
+      >
+        {children}
+      </View>
+    </Animated.View>
+  );
+}
+
+export default function EntryDetailsScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const { day, mood, emoji, text } = params;
+  const [entryText, setEntryText] = React.useState(text?.toString() || "");
+
+  return (
+    <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN }}>
+      <View style={styles.header}>
+        <AnimatedIconButton onPress={() => router.back()}>
+          <ChevronLeft color={TEXT_TERTIARY} size={28} />
+        </AnimatedIconButton>
+        <View style={styles.headerTitleSpacer} />
+        <View style={styles.headerActions}>
+          <AnimatedIconButton>
+            <Trash2 color={TEXT_TERTIARY} size={22} />
+          </AnimatedIconButton>
+          <AnimatedIconButton>
+            <Check color={PRIMARY} size={22} />
+          </AnimatedIconButton>
+        </View>
+      </View>
+      <View style={styles.content}>
+        <Text
+          style={[
+            styles.sentiment,
+            {
+              color:
+                mood?.toString().toLowerCase() === "negative"
+                  ? NEGATIVE
+                  : PRIMARY,
+            },
+          ]}
+          weight="medium"
+        >
+          {mood?.toString().toUpperCase()}
+        </Text>
+        <Text weight="bold" style={styles.day}>
+          {day} {emoji}
+        </Text>
+        <TextInput
+          style={styles.textInput}
+          multiline
+          value={entryText}
+          onChangeText={setEntryText}
+          placeholder="Edit your journal entry..."
+          placeholderTextColor={TEXT_TERTIARY}
+          textAlignVertical="top"
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 56,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    backgroundColor: BACKGROUND_MAIN,
+  },
+  headerTitleSpacer: {
+    flex: 1,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+  },
+  sentiment: {
+    fontSize: 14,
+    letterSpacing: 2,
+    marginBottom: 8,
+  },
+  day: {
+    fontSize: 28,
+    marginBottom: 12,
+    color: TEXT_PRIMARY,
+  },
+  text: {
+    fontSize: 16,
+    color: TEXT_TERTIARY,
+    lineHeight: 26,
+  },
+  textInput: {
+    fontSize: 16,
+    color: TEXT_SECONDARY,
+    lineHeight: 40,
+    marginTop: 8,
+    padding: 0,
+    backgroundColor: "transparent",
+    fontFamily: "Inter_400Regular",
+    flex: 1,
+  },
+});

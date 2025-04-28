@@ -46,3 +46,6 @@ export const GRADIENT_TRANSPARENT = colors.gradients.transparent;
 
 // Other
 export const SHADOW_COLOR = colors.shadow;
+
+// Negative sentiment color
+export const NEGATIVE = "#E05C71";

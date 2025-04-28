@@ -1,55 +1,13 @@
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import MoodCard from "@/components/MoodCard";
 import { BACKGROUND_MAIN, TEXT_TERTIARY, PRIMARY } from "@/constants/colors";
-
-const WEEK_DATA = [
-  {
-    day: "Sunday",
-    mood: "Positive",
-    emoji: "🙂",
-    text: "Today has been a really hard day. But...",
-  },
-  {
-    day: "Monday",
-    mood: "Negative",
-    emoji: "🙁",
-    text: "Today has been a really hard day. But...",
-  },
-  {
-    day: "Tuesday",
-    mood: "Negative",
-    emoji: "🙁",
-    text: "Today has been a really hard day. But...",
-  },
-  {
-    day: "Wednesday",
-    mood: "Positive",
-    emoji: "🙂",
-    text: "Today has been a really hard day. But...",
-  },
-  {
-    day: "Thursday",
-    mood: "Positive",
-    emoji: "🙂",
-    text: "Today has been a really hard day. But...",
-  },
-  {
-    day: "Friday",
-    mood: "Negative",
-    emoji: "🙁",
-    text: "Today has been a really hard day. But...",
-  },
-  {
-    day: "Saturday",
-    mood: "Negative",
-    emoji: "🙁",
-    text: "Today has been a really hard day. But...",
-  },
-];
+import { WEEK_JOURNAL_ENTRIES } from "@/constants/journalData";
 
 export default function ListScreen() {
+  const router = useRouter();
   return (
     <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN, paddingTop: 56 }}>
       <ScrollView
@@ -59,13 +17,19 @@ export default function ListScreen() {
         <Text weight="bold" style={styles.heading}>
           This week
         </Text>
-        {WEEK_DATA.map((entry, idx) => (
+        {WEEK_JOURNAL_ENTRIES.map((entry, idx) => (
           <MoodCard
             key={entry.day}
             day={entry.day}
             mood={entry.mood as "Positive" | "Negative"}
             emoji={entry.emoji}
             text={entry.text}
+            onPress={() =>
+              router.push({
+                pathname: "/entry-details",
+                params: entry,
+              })
+            }
           />
         ))}
       </ScrollView>

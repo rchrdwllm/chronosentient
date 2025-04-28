@@ -133,9 +133,5 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     backgroundColor: BACKGROUND_TRANSPARENT,
     shadowColor: SHADOW_COLOR,
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 0,
   },
 });

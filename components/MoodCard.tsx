@@ -1,16 +1,23 @@
 import React, { useRef } from "react";
 import { View, StyleSheet, Pressable, Animated } from "react-native";
 import Text from "@/components/Text";
-import { PRIMARY, TEXT_TERTIARY } from "@/constants/colors";
+import { NEGATIVE, PRIMARY, TEXT_TERTIARY } from "@/constants/colors";
 
 export type MoodCardProps = {
   day: string;
   mood: "Positive" | "Negative";
   emoji: string;
   text: string;
+  onPress?: () => void;
 };
 
-export default function MoodCard({ day, mood, emoji, text }: MoodCardProps) {
+export default function MoodCard({
+  day,
+  mood,
+  emoji,
+  text,
+  onPress,
+}: MoodCardProps) {
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -32,7 +39,11 @@ export default function MoodCard({ day, mood, emoji, text }: MoodCardProps) {
   };
 
   return (
-    <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <Pressable
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={onPress}
+    >
       <Animated.View
         style={[
           styles.card,
@@ -76,7 +87,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   cardHeader: {
-    flexGrow: 1,
+    flex: 1,
   },
   day: {
     fontSize: 16,
@@ -87,12 +98,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginRight: 8,
   },
-  sentimentContainer: {},
+  sentimentContainer: {
+    width: 64,
+  },
   positive: {
     color: PRIMARY,
   },
   negative: {
-    color: "#E05C71",
+    color: NEGATIVE,
   },
   emoji: {
     fontSize: 32,
