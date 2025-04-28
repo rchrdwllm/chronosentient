@@ -3,6 +3,14 @@ import { View, StyleSheet, Animated, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Home, Plus, List, ChartSpline, Settings2 } from "lucide-react-native";
 import { useRouter, usePathname } from "expo-router";
+import {
+  PRIMARY,
+  TEXT_SECONDARY,
+  TEXT_TERTIARY,
+  TEXT_WHITE,
+  BACKGROUND_MAIN,
+  GRADIENT_TRANSPARENT,
+} from "@/constants/colors";
 
 const TABS = [
   { key: "home", icon: Home, route: "/" },
@@ -49,7 +57,7 @@ export default function BottomNavigation() {
   return (
     <View style={styles.containerWrapper}>
       <LinearGradient
-        colors={["#F6F6F400", "#F6F6F4"]}
+        colors={[GRADIENT_TRANSPARENT, BACKGROUND_MAIN]}
         style={styles.gradient}
         pointerEvents="none"
       />
@@ -57,7 +65,7 @@ export default function BottomNavigation() {
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.route;
-          const iconColor = isActive ? "#797A86" : "#C2C2C6";
+          const iconColor = isActive ? TEXT_SECONDARY : TEXT_TERTIARY;
           const bgStyle =
             tab.key === "add" ? styles.addButton : styles.tabButton;
 
@@ -66,9 +74,16 @@ export default function BottomNavigation() {
               key={tab.key}
               style={bgStyle}
               activeOpacity={0.7}
-              onPress={() => router.push(tab.route as any)}
+              onPress={() => {
+                if (!isActive) {
+                  router.push(tab.route as any);
+                }
+              }}
             >
-              <Icon color={tab.key === "add" ? "#fff" : iconColor} size={28} />
+              <Icon
+                color={tab.key === "add" ? TEXT_WHITE : iconColor}
+                size={28}
+              />
             </AnimatedTabButton>
           );
         })}
@@ -79,7 +94,7 @@ export default function BottomNavigation() {
 
 const styles = StyleSheet.create({
   containerWrapper: {
-    backgroundColor: "#F6F6F4",
+    backgroundColor: BACKGROUND_MAIN,
     position: "relative",
   },
   gradient: {
@@ -96,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 18,
     paddingTop: 12,
-    backgroundColor: "#F6F6F4",
+    backgroundColor: BACKGROUND_MAIN,
     zIndex: 2,
   },
   tabButton: {
@@ -104,7 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   addButton: {
-    backgroundColor: "#71ABE0",
+    backgroundColor: PRIMARY,
     borderRadius: 10,
     height: 52,
     width: 52,

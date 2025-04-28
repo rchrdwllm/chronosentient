@@ -8,6 +8,8 @@ import {
 import { SplashScreen } from "expo-router";
 import React, { useEffect } from "react";
 import BottomNavigation from "@/components/BottomNavigation";
+import { View } from "react-native";
+import { BACKGROUND_MAIN } from "@/constants/colors";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -27,7 +29,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN }}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -35,6 +37,6 @@ export default function RootLayout() {
       />
       {/* Bottom navigation is rendered above all screens for now */}
       <BottomNavigation />
-    </>
+    </View>
   );
 }

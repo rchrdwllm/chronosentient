@@ -6,6 +6,7 @@ import {
   Inter_500Medium,
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
+import { TEXT_PRIMARY } from "@/constants/colors";
 
 export type TextProps = RNTextProps & {
   weight?: "regular" | "medium" | "bold";
@@ -36,7 +37,7 @@ export default function Text({
       : "Inter_400Regular";
 
   return (
-    <RNText style={[{ fontFamily }, style]} {...props}>
+    <RNText style={[{ fontFamily, color: TEXT_PRIMARY }, style]} {...props}>
       {children}
     </RNText>
   );
