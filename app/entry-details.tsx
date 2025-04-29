@@ -113,9 +113,9 @@ export default function EntryDetailsScreen() {
         <AnimatedIconButton onPress={() => router.back()}>
           <ChevronLeft color={TEXT_TERTIARY} size={28} />
         </AnimatedIconButton>
-        {/* {formattedTime ? (
+        {formattedTime ? (
           <Text style={styles.headerTime}>{formattedTime}</Text>
-        ) : null} */}
+        ) : null}
         <View style={styles.headerActions}>
           <AnimatedIconButton onPress={handleDelete}>
             <Trash2 color={TEXT_TERTIARY} size={22} />
