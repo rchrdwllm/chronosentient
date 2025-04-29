@@ -1,5 +1,12 @@
 import React, { useRef } from "react";
-import { View, StyleSheet, Pressable, Animated, TextInput } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Animated,
+  TextInput,
+  Alert,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Text from "@/components/Text";
 import { ChevronLeft, Trash2, Check } from "lucide-react-native";
@@ -11,6 +18,7 @@ import {
   TEXT_SECONDARY,
   NEGATIVE,
 } from "@/constants/colors";
+import { useJournalStore } from "@/stores/journalStore";
 
 function AnimatedIconButton({ onPress, children, style }: any) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -52,8 +60,35 @@ function AnimatedIconButton({ onPress, children, style }: any) {
 export default function EntryDetailsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { day, mood, emoji, text } = params;
+  const { day, mood, emoji, text, date } = params;
   const [entryText, setEntryText] = React.useState(text?.toString() || "");
+  const updateEntry = useJournalStore((state) => state.updateEntry);
+  const deleteEntry = useJournalStore((state) => state.deleteEntry);
+
+  const handleUpdate = () => {
+    if (!date) return;
+    updateEntry(date.toString(), { text: entryText });
+    router.back();
+  };
+
+  const handleDelete = () => {
+    if (!date) return;
+    Alert.alert(
+      "Delete Entry",
+      "Are you sure you want to delete this entry? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await deleteEntry(date.toString());
+            router.replace("/list");
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN }}>
@@ -63,10 +98,10 @@ export default function EntryDetailsScreen() {
         </AnimatedIconButton>
         <View style={styles.headerTitleSpacer} />
         <View style={styles.headerActions}>
-          <AnimatedIconButton>
+          <AnimatedIconButton onPress={handleDelete}>
             <Trash2 color={TEXT_TERTIARY} size={22} />
           </AnimatedIconButton>
-          <AnimatedIconButton>
+          <AnimatedIconButton onPress={handleUpdate}>
             <Check color={PRIMARY} size={22} />
           </AnimatedIconButton>
         </View>

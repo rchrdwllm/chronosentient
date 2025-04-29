@@ -13,6 +13,9 @@ import {
   BACKGROUND_TRANSPARENT,
   SHADOW_COLOR,
 } from "@/constants/colors";
+import { useJournalStore } from "@/stores/journalStore";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 function getTodayString() {
   const today = new Date();
@@ -61,6 +64,31 @@ function AnimatedIconButton({ onPress, children, style }: any) {
 export default function AddScreen() {
   const router = useRouter();
   const [entry, setEntry] = useState("");
+  const addEntry = useJournalStore((state) => state.addEntry);
+
+  const handleAdd = () => {
+    if (!entry.trim()) return;
+
+    const today = new Date();
+    const isoDate = today.toISOString().slice(0, 10); // YYYY-MM-DD
+    const dayOfWeek = today.toLocaleDateString(undefined, { weekday: "long" });
+
+    const newEntry = {
+      id: uuidv4(),
+      date: isoDate,
+      day: dayOfWeek,
+      mood: "Positive", // Default mood, you may want to let user pick
+      emoji: "😊", // Default emoji, you may want to let user pick
+      text: entry,
+    };
+
+    addEntry(newEntry);
+
+    router.push({
+      pathname: "/entry-details",
+      params: newEntry,
+    });
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN }}>
@@ -74,7 +102,7 @@ export default function AddScreen() {
         <Text weight="medium" style={styles.headerTitle}>
           {getTodayString()}
         </Text>
-        <AnimatedIconButton style={styles.headerIcon}>
+        <AnimatedIconButton style={styles.headerIcon} onPress={handleAdd}>
           <Check color={PRIMARY} size={26} />
         </AnimatedIconButton>
       </View>

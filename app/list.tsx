@@ -3,11 +3,13 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import MoodCard from "@/components/MoodCard";
-import { BACKGROUND_MAIN, TEXT_TERTIARY, PRIMARY } from "@/constants/colors";
-import { WEEK_JOURNAL_ENTRIES } from "@/constants/journalData";
+import { BACKGROUND_MAIN } from "@/constants/colors";
+import { useJournalStore } from "@/stores/journalStore";
 
 export default function ListScreen() {
   const router = useRouter();
+  const entries = useJournalStore((state) => state.entries);
+
   return (
     <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN, paddingTop: 56 }}>
       <ScrollView
@@ -17,9 +19,9 @@ export default function ListScreen() {
         <Text weight="bold" style={styles.heading}>
           This week
         </Text>
-        {WEEK_JOURNAL_ENTRIES.map((entry, idx) => (
+        {entries.map((entry, idx) => (
           <MoodCard
-            key={entry.day}
+            key={entry.id}
             day={entry.day}
             mood={entry.mood as "Positive" | "Negative"}
             emoji={entry.emoji}
