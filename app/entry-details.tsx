@@ -43,16 +43,15 @@ function AnimatedIconButton({ onPress, children, style }: any) {
 
   return (
     <Animated.View style={[{ transform: [{ scale }] }, style]}>
-      <View
-        onTouchStart={handlePressIn}
-        onTouchEnd={handlePressOut}
-        onTouchCancel={handlePressOut}
-        onTouchMove={handlePressOut}
-        onStartShouldSetResponder={() => true}
-        onResponderRelease={onPress}
+      <Pressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={{ justifyContent: "center", alignItems: "center" }}
+        android_ripple={{ color: "#ccc", borderless: true }}
       >
         {children}
-      </View>
+      </Pressable>
     </Animated.View>
   );
 }
@@ -64,6 +63,24 @@ export default function EntryDetailsScreen() {
   const [entryText, setEntryText] = React.useState(text?.toString() || "");
   const updateEntry = useJournalStore((state) => state.updateEntry);
   const deleteEntry = useJournalStore((state) => state.deleteEntry);
+
+  // Format the date string (e.g., "April 22, 2025")
+  let formattedDate = "";
+  let formattedTime = "";
+
+  if (date) {
+    const d = new Date(date.toString());
+    formattedDate = d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    formattedTime = d.toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
 
   const handleUpdate = () => {
     if (!date) return;
@@ -96,7 +113,9 @@ export default function EntryDetailsScreen() {
         <AnimatedIconButton onPress={() => router.back()}>
           <ChevronLeft color={TEXT_TERTIARY} size={28} />
         </AnimatedIconButton>
-        <View style={styles.headerTitleSpacer} />
+        {/* {formattedTime ? (
+          <Text style={styles.headerTime}>{formattedTime}</Text>
+        ) : null} */}
         <View style={styles.headerActions}>
           <AnimatedIconButton onPress={handleDelete}>
             <Trash2 color={TEXT_TERTIARY} size={22} />
@@ -148,13 +167,21 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     backgroundColor: BACKGROUND_MAIN,
   },
-  headerTitleSpacer: {
-    flex: 1,
-  },
   headerActions: {
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
+  },
+  headerTime: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    fontSize: 16,
+    color: TEXT_TERTIARY,
+    top: 60,
+    zIndex: 1,
+    pointerEvents: "none",
   },
   content: {
     flex: 1,
@@ -168,8 +195,13 @@ const styles = StyleSheet.create({
   },
   day: {
     fontSize: 28,
-    marginBottom: 12,
+    marginBottom: 0,
     color: TEXT_PRIMARY,
+  },
+  date: {
+    fontSize: 16,
+    color: TEXT_TERTIARY,
+    marginBottom: 12,
   },
   text: {
     fontSize: 16,
@@ -180,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: TEXT_SECONDARY,
     lineHeight: 40,
-    marginTop: 8,
+    marginTop: 16,
     padding: 0,
     backgroundColor: "transparent",
     fontFamily: "Inter_400Regular",

@@ -70,12 +70,12 @@ export default function AddScreen() {
     if (!entry.trim()) return;
 
     const today = new Date();
-    const isoDate = today.toISOString().slice(0, 10); // YYYY-MM-DD
+    const isoDate = today.toISOString(); // Full ISO string with date and time
     const dayOfWeek = today.toLocaleDateString(undefined, { weekday: "long" });
 
     const newEntry = {
       id: uuidv4(),
-      date: isoDate,
+      date: isoDate, // Store full ISO string
       day: dayOfWeek,
       mood: "Positive", // Default mood, you may want to let user pick
       emoji: "😊", // Default emoji, you may want to let user pick
