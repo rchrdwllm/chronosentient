@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: 220,
-    height: 80,
+    height: 120,
     alignItems: "flex-end",
   },
   barItem: {
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   bar: {
     width: 16,
-    height: 60,
+    height: 100,
     borderRadius: 8,
     marginBottom: 6,
   },
