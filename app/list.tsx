@@ -9,6 +9,7 @@ import { useJournalStore } from "@/stores/journalStore";
 export default function ListScreen() {
   const router = useRouter();
   const entries = useJournalStore((state) => state.entries);
+  const deleteEntry = useJournalStore((state) => state.deleteEntry);
 
   return (
     <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN, paddingTop: 56 }}>
@@ -32,6 +33,7 @@ export default function ListScreen() {
                 params: entry,
               })
             }
+            onDelete={() => deleteEntry(entry.date)}
           />
         ))}
       </ScrollView>

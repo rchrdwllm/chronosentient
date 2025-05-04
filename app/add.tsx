@@ -16,6 +16,7 @@ import {
 import { useJournalStore } from "@/stores/journalStore";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
+import vader from "vader-sentiment";
 
 function getTodayString() {
   const today = new Date();
@@ -70,15 +71,27 @@ export default function AddScreen() {
     if (!entry.trim()) return;
 
     const today = new Date();
-    const isoDate = today.toISOString(); // Full ISO string with date and time
+    const isoDate = today.toISOString();
     const dayOfWeek = today.toLocaleDateString(undefined, { weekday: "long" });
+
+    const sentiment = vader.SentimentIntensityAnalyzer.polarity_scores(entry);
+
+    console.log("Sentiment Analysis Result:", sentiment);
+
+    const mood =
+      sentiment.compound >= 0.05
+        ? "Positive"
+        : sentiment.compound > -0.05
+        ? "Neutral"
+        : "Negative";
+    const emoji = mood === "Positive" ? "😊" : mood === "Neutral" ? "😐" : "😢";
 
     const newEntry = {
       id: uuidv4(),
-      date: isoDate, // Store full ISO string
+      date: isoDate,
       day: dayOfWeek,
-      mood: "Positive", // Default mood, you may want to let user pick
-      emoji: "😊", // Default emoji, you may want to let user pick
+      mood,
+      emoji,
       text: entry,
     };
 

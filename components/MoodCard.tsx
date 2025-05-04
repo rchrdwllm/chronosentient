@@ -1,7 +1,19 @@
 import React, { useRef } from "react";
-import { View, StyleSheet, Pressable, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  PanResponder,
+  Pressable,
+} from "react-native";
 import Text from "@/components/Text";
-import { NEGATIVE, PRIMARY, TEXT_TERTIARY } from "@/constants/colors";
+import { Trash2 } from "lucide-react-native";
+import {
+  NEGATIVE,
+  PRIMARY,
+  TEXT_TERTIARY,
+  TEXT_WHITE,
+} from "@/constants/colors";
 
 export type MoodCardProps = {
   day: string;
@@ -9,6 +21,7 @@ export type MoodCardProps = {
   emoji: string;
   text: string;
   onPress?: () => void;
+  onDelete?: () => void;
 };
 
 export default function MoodCard({
@@ -17,8 +30,57 @@ export default function MoodCard({
   emoji,
   text,
   onPress,
+  onDelete,
 }: MoodCardProps) {
   const scale = useRef(new Animated.Value(1)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+  const showTrash = useRef(new Animated.Value(0)).current;
+  const SWIPE_THRESHOLD = -100;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dy) < 10;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dx < 0) {
+          translateX.setValue(gestureState.dx);
+          showTrash.setValue(Math.min(1, Math.abs(gestureState.dx) / 80));
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dx < SWIPE_THRESHOLD) {
+          Animated.parallel([
+            Animated.timing(translateX, {
+              toValue: -400,
+              duration: 200,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opacity, {
+              toValue: 0,
+              duration: 200,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            onDelete && onDelete();
+          });
+        } else {
+          Animated.parallel([
+            Animated.spring(translateX, {
+              toValue: 0,
+              useNativeDriver: true,
+            }),
+            Animated.timing(showTrash, {
+              toValue: 0,
+              duration: 150,
+              useNativeDriver: true,
+            }),
+          ]).start();
+        }
+      },
+    })
+  ).current;
 
   const handlePressIn = () => {
     Animated.spring(scale, {
@@ -39,41 +101,69 @@ export default function MoodCard({
   };
 
   return (
-    <Pressable
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      onPress={onPress}
-    >
+    <View style={{ position: "relative" }}>
       <Animated.View
+        pointerEvents="none"
         style={[
-          styles.card,
-          mood === "Positive" ? styles.positiveCard : styles.negativeCard,
-          { transform: [{ scale }] },
+          styles.trashContainer,
+          {
+            opacity: showTrash,
+            right: 24,
+            transform: [
+              {
+                scale: showTrash.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.7, 1],
+                }),
+              },
+            ],
+          },
         ]}
       >
-        <View style={[styles.cardHeader]}>
-          <Text weight="bold" style={styles.day}>
-            {day}
-          </Text>
-          <Text numberOfLines={1} style={styles.text}>
-            {text}
-          </Text>
-        </View>
-        <View style={styles.sentimentContainer}>
-          <View style={{ alignItems: "center" }}>
-            <Text
-              style={[
-                styles.mood,
-                mood === "Positive" ? styles.positive : styles.negative,
-              ]}
-            >
-              {mood}
-            </Text>
-            <Text style={styles.emoji}>{emoji}</Text>
-          </View>
+        <View style={styles.trashCircle}>
+          <Trash2 color={TEXT_WHITE} size={22} />
         </View>
       </Animated.View>
-    </Pressable>
+      <Animated.View
+        style={[{ transform: [{ translateX }, { scale }], opacity }]}
+        {...panResponder.panHandlers}
+      >
+        <Pressable
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onPress={onPress}
+        >
+          <View
+            style={[
+              styles.card,
+              mood === "Positive" ? styles.positiveCard : styles.negativeCard,
+            ]}
+          >
+            <View style={[styles.cardHeader]}>
+              <Text weight="bold" style={styles.day}>
+                {day}
+              </Text>
+              <Text numberOfLines={1} style={styles.text}>
+                {text}
+              </Text>
+            </View>
+            <View style={styles.sentimentContainer}>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={[
+                    styles.mood,
+                    mood === "Positive" ? styles.positive : styles.negative,
+                  ]}
+                >
+                  {mood}
+                </Text>
+                <Text style={styles.emoji}>{emoji}</Text>
+              </View>
+            </View>
+          </View>
+        </Pressable>
+      </Animated.View>
+    </View>
   );
 }
 
@@ -116,10 +206,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 2,
   },
-  positiveCard: {
-    // Optionally add a subtle border or shadow for positive
+  positiveCard: {},
+  negativeCard: {},
+  trashContainer: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
   },
-  negativeCard: {
-    // Optionally add a subtle border or shadow for negative
+  trashCircle: {
+    backgroundColor: NEGATIVE,
+    borderRadius: 24,
+    width: 48,
+    height: 48,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: NEGATIVE,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
   },
 });

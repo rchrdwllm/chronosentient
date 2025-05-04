@@ -40,7 +40,6 @@ export const useJournalStore = create<JournalState>((set, get) => ({
   },
 }));
 
-// Load entries from AsyncStorage on app start
 (async () => {
   const data = await AsyncStorage.getItem("journalEntries");
   if (data) {
