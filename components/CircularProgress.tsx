@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Svg, Circle } from "react-native-svg";
 import Text from "@/components/Text";
-import { TEXT_TERTIARY } from "@/constants/colors";
+import { TEXT_LIGHT } from "@/constants/colors";
 
 export default function CircularProgress({
   percent,
@@ -23,7 +23,7 @@ export default function CircularProgress({
     <View style={styles.container}>
       <Svg width={radius * 2} height={radius * 2}>
         <Circle
-          stroke={TEXT_TERTIARY}
+          stroke={TEXT_LIGHT}
           fill="none"
           cx={radius}
           cy={radius}

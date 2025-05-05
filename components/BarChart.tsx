@@ -1,17 +1,27 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Text from "@/components/Text";
-import { PRIMARY, NEGATIVE, TEXT_TERTIARY } from "@/constants/colors";
+import {
+  PRIMARY,
+  NEGATIVE,
+  TEXT_TERTIARY,
+  TEXT_LIGHT,
+  BACKGROUND_MAIN,
+} from "@/constants/colors";
 
 export default function BarChart({
   data,
 }: {
-  data: { day: string; sentiment: "Positive" | "Negative" | "Neutral" }[];
+  data: {
+    day: string;
+    sentiment: "Positive" | "Negative" | "Neutral" | "Missing";
+  }[];
 }) {
   const colorMap = {
     Positive: PRIMARY,
     Negative: NEGATIVE,
     Neutral: TEXT_TERTIARY,
+    Missing: BACKGROUND_MAIN,
   };
   return (
     <View style={styles.container}>

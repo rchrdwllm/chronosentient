@@ -1,10 +1,9 @@
 import { JournalEntry } from "@/types";
 
-// Dummy journal entries for each day of the week
 export const WEEK_JOURNAL_ENTRIES: JournalEntry[] = [
   {
     id: "b1e7c8a2-1f2d-4c3a-9e1a-1a2b3c4d5e6f",
-    date: "2025-04-27", // Sunday
+    date: "2025-04-27",
     day: "Sunday",
     mood: "Positive",
     emoji: "😄",
@@ -12,7 +11,7 @@ export const WEEK_JOURNAL_ENTRIES: JournalEntry[] = [
   },
   {
     id: "a2c3b4d5-6e7f-8a9b-0c1d-2e3f4a5b6c7d",
-    date: "2025-04-28", // Monday
+    date: "2025-04-28",
     day: "Monday",
     mood: "Negative",
     emoji: "😔",

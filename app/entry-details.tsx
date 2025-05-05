@@ -82,6 +82,17 @@ export default function EntryDetailsScreen() {
     });
   }
 
+  // Determine if entry is editable (only if today is the same as entry date)
+  let isEditable = false;
+  if (date) {
+    const entryDate = new Date(date.toString());
+    const now = new Date();
+    isEditable =
+      entryDate.getFullYear() === now.getFullYear() &&
+      entryDate.getMonth() === now.getMonth() &&
+      entryDate.getDate() === now.getDate();
+  }
+
   const handleUpdate = () => {
     if (!date) return;
     updateEntry(date.toString(), { text: entryText });
@@ -151,7 +162,19 @@ export default function EntryDetailsScreen() {
           placeholder="Edit your journal entry..."
           placeholderTextColor={TEXT_TERTIARY}
           textAlignVertical="top"
+          editable={isEditable}
         />
+        {!isEditable && (
+          <Text
+            style={{
+              color: TEXT_TERTIARY,
+              marginBottom: 48,
+              textAlign: "center",
+            }}
+          >
+            You can only edit entries on the day they were created.
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -180,7 +203,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: TEXT_TERTIARY,
     top: 60,
-    zIndex: 1,
+    zIndex: 0,
     pointerEvents: "none",
   },
   content: {
