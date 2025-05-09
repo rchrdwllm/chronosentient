@@ -116,7 +116,11 @@ export default function StatsScreen() {
 
   // Month view logic
   const today = new Date();
-  const monthDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+  const monthDate = new Date(
+    today.getFullYear(),
+    today.getMonth() + monthOffset,
+    1
+  );
   const year = monthDate.getFullYear();
   const month = monthDate.getMonth();
   const firstDay = new Date(year, month, 1);
@@ -125,7 +129,10 @@ export default function StatsScreen() {
   const startWeekday = firstDay.getDay(); // 0 (Sun) - 6 (Sat)
 
   // Month label for header
-  const monthLabel = monthDate.toLocaleString(undefined, { month: "long", year: "numeric" });
+  const monthLabel = monthDate.toLocaleString(undefined, {
+    month: "long",
+    year: "numeric",
+  });
 
   // Map entries by date string (YYYY-MM-DD)
   const entryByDate = Object.fromEntries(
@@ -139,10 +146,7 @@ export default function StatsScreen() {
   // Filter entries for the current month
   const monthEntries = entries.filter((entry) => {
     const entryDate = new Date(entry.date);
-    return (
-      entryDate.getFullYear() === year &&
-      entryDate.getMonth() === month
-    );
+    return entryDate.getFullYear() === year && entryDate.getMonth() === month;
   });
 
   // Calculate sentiment counts for the current month only
@@ -217,20 +221,28 @@ export default function StatsScreen() {
       <View style={styles.segmentedControlContainer}>
         <SegmentedControl value={segment} onChange={setSegment} />
         <View style={styles.progressRow}>
-          {(segment === "Month" ? monthProgressData : progressData).map((item) => (
-            <CircularProgress key={item.label} {...item} />
-          ))}
+          {(segment === "Month" ? monthProgressData : progressData).map(
+            (item) => (
+              <CircularProgress key={item.label} {...item} />
+            )
+          )}
         </View>
         {segment === "Month" ? (
           <View style={styles.calendarContainer}>
             <View style={styles.weekHeaderRow}>
-              <Pressable onPress={() => setMonthOffset((m) => m - 1)} style={styles.arrowBtn}>
+              <Pressable
+                onPress={() => setMonthOffset((m) => m - 1)}
+                style={styles.arrowBtn}
+              >
                 <ChevronLeft color={TEXT_TERTIARY} size={22} />
               </Pressable>
               <Text weight="bold" style={styles.barChartTitle}>
                 {monthLabel}
               </Text>
-              <Pressable onPress={() => setMonthOffset((m) => m + 1)} style={styles.arrowBtn}>
+              <Pressable
+                onPress={() => setMonthOffset((m) => m + 1)}
+                style={styles.arrowBtn}
+              >
                 <ChevronRight color={TEXT_TERTIARY} size={22} />
               </Pressable>
             </View>
