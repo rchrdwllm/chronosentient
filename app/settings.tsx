@@ -7,11 +7,13 @@ export default function SettingsScreen() {
   const [darkMode, setDarkMode] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [dataCollection, setDataCollection] = useState(false);
-  const [notifications, setNotifications] = useState(false);  
+  const [notifications, setNotifications] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text weight="bold" style={styles.header}>Settings</Text>
+      <Text weight="bold" style={styles.header}>
+        Settings
+      </Text>
 
       <View style={styles.card}>
         <View style={styles.settingRow}>
@@ -26,7 +28,12 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.settingRow}>
-          <MaterialCommunityIcons name="format-size" size={20} color="#69A9F9" style={styles.icon} />
+          <MaterialCommunityIcons
+            name="format-size"
+            size={20}
+            color="#69A9F9"
+            style={styles.icon}
+          />
           <Text style={styles.label}>Large Text</Text>
           <Switch
             value={largeText}
@@ -37,7 +44,12 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.settingRow}>
-          <Ionicons name="information-circle" size={20} color="#69A9F9" style={styles.icon} />
+          <Ionicons
+            name="information-circle"
+            size={20}
+            color="#69A9F9"
+            style={styles.icon}
+          />
           <Text style={styles.label}>Data Collection</Text>
           <Switch
             value={dataCollection}
@@ -78,16 +90,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
   },
   settingRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
   },
   icon: {
     marginRight: 12,
