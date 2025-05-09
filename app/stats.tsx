@@ -23,35 +23,6 @@ export default function StatsScreen() {
   const entries = useJournalStore((state) => state.entries);
   const router = useRouter();
 
-  // Calculate sentiment counts
-  const sentimentCounts = entries.reduce(
-    (acc, entry) => {
-      if (entry.mood === "Positive") acc.positive++;
-      else if (entry.mood === "Negative") acc.negative++;
-      else acc.neutral++;
-      return acc;
-    },
-    { positive: 0, neutral: 0, negative: 0 }
-  );
-  const total = entries.length || 1;
-  const progressData = [
-    {
-      percent: Math.round((sentimentCounts.positive / total) * 100),
-      color: PRIMARY,
-      label: "Positive",
-    },
-    {
-      percent: Math.round((sentimentCounts.neutral / total) * 100),
-      color: TEXT_TERTIARY,
-      label: "Neutral",
-    },
-    {
-      percent: Math.round((sentimentCounts.negative / total) * 100),
-      color: NEGATIVE,
-      label: "Negative",
-    },
-  ];
-
   // Always show all 7 days (S, M, T, W, T, F, S)
   const weekDays = [
     { key: "S", label: "Sunday" },
@@ -94,6 +65,35 @@ export default function StatsScreen() {
     return entryDate >= weekStart && entryDate <= weekEnd;
   });
 
+  // Calculate sentiment counts for the current week only
+  const weekSentimentCounts = weekEntries.reduce(
+    (acc, entry) => {
+      if (entry.mood === "Positive") acc.positive++;
+      else if (entry.mood === "Negative") acc.negative++;
+      else acc.neutral++;
+      return acc;
+    },
+    { positive: 0, neutral: 0, negative: 0 }
+  );
+  const weekTotal = weekEntries.length || 1;
+  const progressData = [
+    {
+      percent: Math.round((weekSentimentCounts.positive / weekTotal) * 100),
+      color: PRIMARY,
+      label: "Positive",
+    },
+    {
+      percent: Math.round((weekSentimentCounts.neutral / weekTotal) * 100),
+      color: TEXT_TERTIARY,
+      label: "Neutral",
+    },
+    {
+      percent: Math.round((weekSentimentCounts.negative / weekTotal) * 100),
+      color: NEGATIVE,
+      label: "Negative",
+    },
+  ];
+
   // Map day label to entry for this week
   const entryByDay = Object.fromEntries(
     weekEntries.map((entry) => [entry.day, entry])
@@ -135,6 +135,44 @@ export default function StatsScreen() {
       return [dateKey, entry];
     })
   );
+
+  // Filter entries for the current month
+  const monthEntries = entries.filter((entry) => {
+    const entryDate = new Date(entry.date);
+    return (
+      entryDate.getFullYear() === year &&
+      entryDate.getMonth() === month
+    );
+  });
+
+  // Calculate sentiment counts for the current month only
+  const monthSentimentCounts = monthEntries.reduce(
+    (acc, entry) => {
+      if (entry.mood === "Positive") acc.positive++;
+      else if (entry.mood === "Negative") acc.negative++;
+      else acc.neutral++;
+      return acc;
+    },
+    { positive: 0, neutral: 0, negative: 0 }
+  );
+  const monthTotal = monthEntries.length || 1;
+  const monthProgressData = [
+    {
+      percent: Math.round((monthSentimentCounts.positive / monthTotal) * 100),
+      color: PRIMARY,
+      label: "Positive",
+    },
+    {
+      percent: Math.round((monthSentimentCounts.neutral / monthTotal) * 100),
+      color: TEXT_TERTIARY,
+      label: "Neutral",
+    },
+    {
+      percent: Math.round((monthSentimentCounts.negative / monthTotal) * 100),
+      color: NEGATIVE,
+      label: "Negative",
+    },
+  ];
 
   // Build calendar grid: array of weeks, each week is array of days
   const calendarDays = [];
@@ -179,7 +217,7 @@ export default function StatsScreen() {
       <View style={styles.segmentedControlContainer}>
         <SegmentedControl value={segment} onChange={setSegment} />
         <View style={styles.progressRow}>
-          {progressData.map((item) => (
+          {(segment === "Month" ? monthProgressData : progressData).map((item) => (
             <CircularProgress key={item.label} {...item} />
           ))}
         </View>
