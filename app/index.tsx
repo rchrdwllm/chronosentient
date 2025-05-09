@@ -9,18 +9,58 @@ import {
   BACKGROUND_MAIN,
 } from "@/constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useJournalStore } from "@/stores/journalStore";
+import { useRouter } from "expo-router";
 
 function SentimentBar() {
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+  const lastWeekStart = new Date(weekStart);
+  lastWeekStart.setDate(weekStart.getDate() - 7);
+  const lastWeekEnd = new Date(weekEnd);
+  lastWeekEnd.setDate(weekEnd.getDate() - 7);
+
+  const entries = useJournalStore((state) => state.entries);
+
+  const weekEntries = entries.filter((entry) => {
+    const entryDate = new Date(entry.date);
+    return entryDate >= weekStart && entryDate <= weekEnd;
+  });
+  const lastWeekEntries = entries.filter((entry) => {
+    const entryDate = new Date(entry.date);
+    return entryDate >= lastWeekStart && entryDate <= lastWeekEnd;
+  });
+
+  const weekPositive = weekEntries.filter((e) => e.mood === "Positive").length;
+  const lastWeekPositive = lastWeekEntries.filter(
+    (e) => e.mood === "Positive"
+  ).length;
+  const weekTotal = weekEntries.length || 1;
+  const lastWeekTotal = lastWeekEntries.length || 1;
+  const weekPercent = (weekPositive / weekTotal) * 100;
+  const lastWeekPercent = (lastWeekPositive / lastWeekTotal) * 100;
+  const diff = Math.round(weekPercent - lastWeekPercent);
+  const diffText =
+    diff > 0
+      ? `${diff}% happier this week`
+      : diff < 0
+      ? `${Math.abs(diff)}% less happy this week`
+      : `No change in happiness this week`;
+
   return (
     <View style={styles.sentimentBarContainer}>
       <View style={styles.sentimentBarBg}>
-        <View style={[styles.sentimentBarFill, { width: "60%" }]} />
-      </View>
-      <View style={styles.sentimentBarLabel}>
-        <Text style={{ color: PRIMARY, fontSize: 15 }} weight="bold">
-          12%
-        </Text>
-        <Text style={{ fontSize: 18, marginLeft: 6 }}>😊</Text>
+        <View
+          style={[
+            styles.sentimentBarFill,
+            { width: `${Math.round(weekPercent)}%` },
+          ]}
+        />
       </View>
     </View>
   );
@@ -67,6 +107,69 @@ function AnimatedCard({
 }
 
 export default function Index() {
+  const entries = useJournalStore((state) => state.entries);
+
+  // Get entries for today, yesterday, and two days ago
+  function getEntryForOffset(offset: number) {
+    const date = new Date();
+    date.setDate(date.getDate() - offset);
+    const dateKey = date.toISOString().slice(0, 10);
+    return entries.find((e) => e.date.slice(0, 10) === dateKey);
+  }
+  const todayEntry = getEntryForOffset(0);
+  const yesterdayEntry = getEntryForOffset(1);
+  const twoDaysAgoEntry = getEntryForOffset(2);
+  const router = useRouter();
+
+  // Calculate sentiment counts for the week (Sunday to Saturday)
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+  const lastWeekStart = new Date(weekStart);
+  lastWeekStart.setDate(weekStart.getDate() - 7);
+  const lastWeekEnd = new Date(weekEnd);
+  lastWeekEnd.setDate(weekEnd.getDate() - 7);
+
+  const weekEntries = entries.filter((entry) => {
+    const entryDate = new Date(entry.date);
+    return entryDate >= weekStart && entryDate <= weekEnd;
+  });
+  const lastWeekEntries = entries.filter((entry) => {
+    const entryDate = new Date(entry.date);
+    return entryDate >= lastWeekStart && entryDate <= lastWeekEnd;
+  });
+
+  const sentimentCounts = weekEntries.reduce(
+    (acc, entry) => {
+      if (entry.mood === "Positive") acc.positive++;
+      else if (entry.mood === "Negative") acc.negative++;
+      else acc.neutral++;
+      return acc;
+    },
+    { positive: 0, neutral: 0, negative: 0 }
+  );
+  const total = weekEntries.length || 1;
+
+  const weekPositive = weekEntries.filter((e) => e.mood === "Positive").length;
+  const lastWeekPositive = lastWeekEntries.filter(
+    (e) => e.mood === "Positive"
+  ).length;
+  const weekTotal = weekEntries.length || 1;
+  const lastWeekTotal = lastWeekEntries.length || 1;
+  const weekPercent = (weekPositive / weekTotal) * 100;
+  const lastWeekPercent = (lastWeekPositive / lastWeekTotal) * 100;
+  const diff = Math.round(weekPercent - lastWeekPercent);
+  const diffText =
+    diff > 0
+      ? `${diff}% happier this week`
+      : diff < 0
+      ? `${Math.abs(diff)}% less happy this week`
+      : `No change in happiness this week`;
+
   return (
     <View style={styles.container}>
       <Text weight="bold" style={styles.welcome}>
@@ -76,33 +179,101 @@ export default function Index() {
         This Week
       </Text>
       <View style={styles.card}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <CircularProgress percent={54} color={PRIMARY} label="Positive" />
-          <View style={{ marginLeft: 18 }}>
+        <View style={styles.progressRow}>
+          <CircularProgress
+            percent={Math.round((sentimentCounts.positive / total) * 100)}
+            color={PRIMARY}
+            label="Positive"
+          />
+          <View style={styles.legendColumn}>
             <Text style={styles.statPositive} weight="bold">
-              63% <Text style={styles.statLabel}>Positive</Text>
+              {Math.round((sentimentCounts.positive / total) * 100)}%{" "}
+              <Text style={styles.statLabel}>Positive</Text>
             </Text>
             <Text style={styles.statNeutral} weight="bold">
-              25% <Text style={styles.statLabel}>Neutral</Text>
+              {Math.round((sentimentCounts.neutral / total) * 100)}%{" "}
+              <Text style={styles.statLabel}>Neutral</Text>
             </Text>
             <Text style={styles.statNegative} weight="bold">
-              12% <Text style={styles.statLabel}>Negative</Text>
+              {Math.round((sentimentCounts.negative / total) * 100)}%{" "}
+              <Text style={styles.statLabel}>Negative</Text>
             </Text>
           </View>
         </View>
       </View>
-      <View style={styles.segmentedRow}>
-        <AnimatedCard>
-          <Text>Two days ago</Text>
-        </AnimatedCard>
-        <AnimatedCard>
-          <Text>Yesterday</Text>
-        </AnimatedCard>
-        <AnimatedCard>
-          <Text>Today</Text>
-        </AnimatedCard>
-      </View>
+      {/* Only render the segmentedRow if there is at least one entry */}
+      {(twoDaysAgoEntry || yesterdayEntry || todayEntry) && (
+        <View style={styles.segmentedRow}>
+          {twoDaysAgoEntry && (
+            <AnimatedCard
+              onPress={() =>
+                router.push({
+                  pathname: "/entry-details",
+                  params: twoDaysAgoEntry,
+                })
+              }
+            >
+              <Text weight="bold">
+                {twoDaysAgoEntry.day} {twoDaysAgoEntry.emoji}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={{ fontSize: 13, color: TEXT_TERTIARY, marginTop: 2 }}
+              >
+                {twoDaysAgoEntry.text}
+              </Text>
+            </AnimatedCard>
+          )}
+          {yesterdayEntry && (
+            <AnimatedCard
+              onPress={() =>
+                router.push({
+                  pathname: "/entry-details",
+                  params: yesterdayEntry,
+                })
+              }
+            >
+              <Text weight="bold">
+                {yesterdayEntry.day} {yesterdayEntry.emoji}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={{ fontSize: 13, color: TEXT_TERTIARY, marginTop: 2 }}
+              >
+                {yesterdayEntry.text}
+              </Text>
+            </AnimatedCard>
+          )}
+          {todayEntry && (
+            <AnimatedCard
+              onPress={() =>
+                router.push({ pathname: "/entry-details", params: todayEntry })
+              }
+            >
+              <Text weight="bold">
+                {todayEntry.day} {todayEntry.emoji}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={{ fontSize: 13, color: TEXT_TERTIARY, marginTop: 2 }}
+              >
+                {todayEntry.text}
+              </Text>
+            </AnimatedCard>
+          )}
+        </View>
+      )}
       <SentimentBar />
+      <Text
+        style={{
+          color: TEXT_TERTIARY,
+          fontSize: 15,
+          textAlign: "center",
+          marginTop: 4,
+        }}
+      >
+        {diffText}
+      </Text>
       <Button
         title="Clear AsyncStorage"
         onPress={() => {
@@ -146,6 +317,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     alignItems: "center",
   },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    gap: 18,
+  },
+  legendColumn: {
+    flex: 1,
+    justifyContent: "center",
+    marginLeft: 18,
+    gap: 10, // add vertical gap between legend items
+  },
   statPositive: { color: PRIMARY, fontSize: 16, marginBottom: 2 },
   statNeutral: { color: TEXT_TERTIARY, fontSize: 16, marginBottom: 2 },
   statNegative: { color: NEGATIVE, fontSize: 16 },
@@ -172,7 +356,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 8,
+    padding: 10,
     paddingHorizontal: 16,
     shadowColor: "#000",
     shadowOpacity: 0.03,
