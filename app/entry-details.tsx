@@ -97,16 +97,22 @@ export default function EntryDetailsScreen() {
   const handleUpdate = () => {
     if (!date) return;
 
-    const sentiment = vader.SentimentIntensityAnalyzer.polarity_scores(entryText);
+    const sentiment =
+      vader.SentimentIntensityAnalyzer.polarity_scores(entryText);
     const newMood =
       sentiment.compound >= 0.05
         ? "Positive"
         : sentiment.compound > -0.05
-        ? "Neutral"
-        : "Negative";
-    const newEmoji = newMood === "Positive" ? "😊" : newMood === "Neutral" ? "😐" : "😢";
+          ? "Neutral"
+          : "Negative";
+    const newEmoji =
+      newMood === "Positive" ? "😊" : newMood === "Neutral" ? "😐" : "😢";
 
-    updateEntry(date.toString(), { text: entryText, mood: newMood, emoji: newEmoji });
+    updateEntry(date.toString(), {
+      text: entryText,
+      mood: newMood,
+      emoji: newEmoji,
+    });
     router.back();
   };
 
@@ -125,7 +131,7 @@ export default function EntryDetailsScreen() {
             router.replace("/list");
           },
         },
-      ]
+      ],
     );
   };
 
