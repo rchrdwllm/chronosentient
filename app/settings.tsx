@@ -26,7 +26,6 @@ export default function SettingsScreen() {
             thumbColor={darkMode ? "#ffffff" : "#f4f3f4"}
           />
         </View>
-
         <View style={styles.settingRow}>
           <MaterialCommunityIcons
             name="format-size"
@@ -40,33 +39,6 @@ export default function SettingsScreen() {
             onValueChange={setLargeText}
             trackColor={{ false: "#ccc", true: "#69A9F9" }}
             thumbColor={largeText ? "#ffffff" : "#f4f3f4"}
-          />
-        </View>
-
-        <View style={styles.settingRow}>
-          <Ionicons
-            name="information-circle"
-            size={20}
-            color="#69A9F9"
-            style={styles.icon}
-          />
-          <Text style={styles.label}>Data Collection</Text>
-          <Switch
-            value={dataCollection}
-            onValueChange={setDataCollection}
-            trackColor={{ false: "#ccc", true: "#69A9F9" }}
-            thumbColor={dataCollection ? "#ffffff" : "#f4f3f4"}
-          />
-        </View>
-
-        <View style={styles.settingRow}>
-          <Feather name="bell" size={20} color="#69A9F9" style={styles.icon} />
-          <Text style={styles.label}>Notifications</Text>
-          <Switch
-            value={notifications}
-            onValueChange={setNotifications}
-            trackColor={{ false: "#ccc", true: "#69A9F9" }}
-            thumbColor={notifications ? "#ffffff" : "#f4f3f4"}
           />
         </View>
       </View>

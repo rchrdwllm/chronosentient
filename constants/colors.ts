@@ -1,31 +1,186 @@
-// All application colors centralized in one place
-export const colors = {
+import { ColorSchemeName, useColorScheme } from "react-native";
+
+/**
+ * Color palette definition with light and dark mode variants
+ * 
+ * USAGE EXAMPLES:
+ * 
+ * 1. Functional components with hooks:
+ * ```
+ * import { useColorScheme } from 'react-native';
+ * import { getColors } from '../constants/colors';
+ * 
+ * function MyComponent() {
+ *   const colorScheme = useColorScheme();
+ *   const colors = getColors(colorScheme);
+ *   
+ *   return (
+ *     <View style={{ backgroundColor: colors.background.main }}>
+ *       <Text style={{ color: colors.text.primary }}>Hello World</Text>
+ *     </View>
+ *   );
+ * }
+ * ```
+ * 
+ * 2. With styled components:
+ * ```
+ * import styled from 'styled-components/native';
+ * import { getColors } from '../constants/colors';
+ * 
+ * const StyledText = styled.Text`
+ *   color: ${props => getColors(props.theme.colorScheme).text.primary};
+ * `;
+ * ```
+ * 
+ * 3. With React Context (recommended for app-wide theme):
+ * ```
+ * // ThemeContext.js
+ * import React, { createContext, useContext } from 'react';
+ * import { useColorScheme } from 'react-native';
+ * import { getColors } from '../constants/colors';
+ * 
+ * const ThemeContext = createContext();
+ * 
+ * export const ThemeProvider = ({ children }) => {
+ *   const colorScheme = useColorScheme();
+ *   const colors = getColors(colorScheme);
+ *   
+ *   return (
+ *     <ThemeContext.Provider value={{ colors, colorScheme }}>
+ *       {children}
+ *     </ThemeContext.Provider>
+ *   );
+ * };
+ * 
+ * export const useTheme = () => useContext(ThemeContext);
+ * ```
+ * 
+ * Then in your components:
+ * ```
+ * import { useTheme } from '../context/ThemeContext';
+ * 
+ * function MyComponent() {
+ *   const { colors } = useTheme();
+ *   return <View style={{ backgroundColor: colors.background.main }} />;
+ * }
+ * ```
+ */
+const colorPalette = {
   // Primary colors
-  primary: "#71ABE0", // Blue color used for add button
+  primary: {
+    light: "#71ABE0", // Blue color used for add button
+    dark: "#4F8ACE",  // Darker blue for dark mode
+  },
 
   // Text colors
   text: {
-    primary: "#25283D",
-    secondary: "#797A86",
-    tertiary: "#C2C2C6",
-    light: "#E1E1E2",
-    white: "#FFFFFF",
+    primary: {
+      light: "#25283D",
+      dark: "#FFFFFF",
+    },
+    secondary: {
+      light: "#797A86",
+      dark: "#ADADB8",
+    },
+    tertiary: {
+      light: "#C2C2C6",
+      dark: "#707079",
+    },
+    light: {
+      light: "#E1E1E2",
+      dark: "#45454A",
+    },
+    white: {
+      light: "#FFFFFF",
+      dark: "#FFFFFF",
+    },
   },
 
   // Background colors
   background: {
-    main: "#F6F6F4",
-    transparent: "transparent",
+    main: {
+      light: "#F6F6F4",
+      dark: "#1A1A1F",
+    },
+    transparent: {
+      light: "transparent",
+      dark: "transparent",
+    },
   },
 
   // Gradients
   gradients: {
-    transparent: "#F6F6F400",
+    transparent: {
+      light: "#F6F6F400",
+      dark: "#1A1A1F00",
+    },
   },
 
-  // Other
-  shadow: undefined,
+  // Negative sentiment color
+  negative: {
+    light: "#E05C71",
+    dark: "#FF6B7E",
+  },
+
+  // Shadow color
+  shadow: {
+    light: undefined,
+    dark: "#000000",
+  },
 };
+
+/**
+ * Function to get colors based on color scheme
+ * @param colorScheme - 'light' or 'dark' color scheme
+ * @returns Object containing all colors for the specified scheme
+ */
+export const getColors = (colorScheme: ColorSchemeName = "light") => {
+  const mode = colorScheme === "dark" ? "dark" : "light";
+
+  return {
+    // Primary colors
+    primary: colorPalette.primary[mode],
+
+    // Text colors
+    text: {
+      primary: colorPalette.text.primary[mode],
+      secondary: colorPalette.text.secondary[mode],
+      tertiary: colorPalette.text.tertiary[mode],
+      light: colorPalette.text.light[mode],
+      white: colorPalette.text.white[mode],
+    },
+
+    // Background colors
+    background: {
+      main: colorPalette.background.main[mode],
+      transparent: colorPalette.background.transparent[mode],
+    },
+
+    // Gradients
+    gradients: {
+      transparent: colorPalette.gradients.transparent[mode],
+    },
+
+    // Other
+    shadow: colorPalette.shadow[mode],
+    negative: colorPalette.negative[mode],
+  };
+};
+
+/**
+ * Helper hook to get colors based on the current system theme
+ * @returns Colors object for the current system theme
+ */
+export const useThemeColors = () => {
+  const colorScheme = useColorScheme();
+  return getColors(colorScheme);
+};
+
+// Default colors (light mode) for backward compatibility
+const defaultColors = getColors("light");
+
+// Export colors object for backward compatibility
+export const colors = defaultColors;
 
 // Export individual colors for easier imports
 export const PRIMARY = colors.primary;
@@ -48,4 +203,4 @@ export const GRADIENT_TRANSPARENT = colors.gradients.transparent;
 export const SHADOW_COLOR = colors.shadow;
 
 // Negative sentiment color
-export const NEGATIVE = "#E05C71";
+export const NEGATIVE = colors.negative;

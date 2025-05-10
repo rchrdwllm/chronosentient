@@ -70,7 +70,7 @@ function SentimentBar() {
             </LinearGradient>
           </Defs>
           <Rect
-            width={`${Math.round(weekPercent)}%`}
+            width={`${Math.round(diff)}%`}
             height="12"
             fill={`url(#${gradientId})`}
             rx="6"
@@ -298,7 +298,6 @@ const styles = StyleSheet.create({
   welcome: {
     fontSize: 32,
     marginBottom: 12,
-    color: "#25283D",
   },
   subtitle: {
     fontSize: 16,
