@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Pressable, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Animated,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import Text from "@/components/Text";
@@ -7,7 +13,13 @@ import MoodCard from "@/components/MoodCard";
 import { BACKGROUND_MAIN, TEXT_TERTIARY } from "@/constants/colors";
 import { useJournalStore } from "@/stores/journalStore";
 
-function AnimatedArrowButton({ onPress, children }: { onPress: () => void; children: React.ReactNode }) {
+function AnimatedArrowButton({
+  onPress,
+  children,
+}: {
+  onPress: () => void;
+  children: React.ReactNode;
+}) {
   const scale = React.useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -99,9 +111,7 @@ export default function ListScreen() {
           </View>
         </View>
         {weekEntries.length === 0 ? (
-          <Text style={styles.noEntriesText}>
-            No entries for this week.
-          </Text>
+          <Text style={styles.noEntriesText}>No entries for this week.</Text>
         ) : (
           weekEntries.map((entry, idx) => (
             <MoodCard
@@ -136,7 +146,7 @@ const styles = StyleSheet.create({
   weekHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 24,
   },
   arrowsContainer: {
     flexDirection: "row",

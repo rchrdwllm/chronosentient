@@ -138,7 +138,10 @@ export default function EntryDetailsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN }}>
       <View style={styles.header}>
-        <AnimatedIconButton onPress={() => router.back()}>
+        <AnimatedIconButton
+          style={styles.headerBackBtn}
+          onPress={() => router.back()}
+        >
           <ChevronLeft color={TEXT_TERTIARY} size={28} />
         </AnimatedIconButton>
         {formattedTime ? (
@@ -209,6 +212,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
     backgroundColor: BACKGROUND_MAIN,
+  },
+  headerBackBtn: {
+    zIndex: 1,
   },
   headerActions: {
     flexDirection: "row",

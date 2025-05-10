@@ -78,6 +78,9 @@ function SentimentBar() {
           />
         </Svg>
       </View>
+      <Text style={{ fontSize: 15 }}>
+        {diff > 0 ? "😊" : diff < 0 ? "☹️" : "😐"}
+      </Text>
     </View>
   );
 }
