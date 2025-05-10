@@ -213,15 +213,7 @@ export default function Index() {
                 })
               }
             >
-              <Text weight="bold">
-                {twoDaysAgoEntry.day} {twoDaysAgoEntry.emoji}
-              </Text>
-              <Text
-                numberOfLines={1}
-                style={{ fontSize: 13, color: TEXT_TERTIARY, marginTop: 2 }}
-              >
-                {twoDaysAgoEntry.text}
-              </Text>
+              <Text weight="bold">Last 2 days</Text>
             </AnimatedCard>
           )}
           {yesterdayEntry && (
@@ -233,15 +225,7 @@ export default function Index() {
                 })
               }
             >
-              <Text weight="bold">
-                {yesterdayEntry.day} {yesterdayEntry.emoji}
-              </Text>
-              <Text
-                numberOfLines={1}
-                style={{ fontSize: 13, color: TEXT_TERTIARY, marginTop: 2 }}
-              >
-                {yesterdayEntry.text}
-              </Text>
+              <Text weight="bold">Yesterday</Text>
             </AnimatedCard>
           )}
           {todayEntry && (
@@ -250,15 +234,7 @@ export default function Index() {
                 router.push({ pathname: "/entry-details", params: todayEntry })
               }
             >
-              <Text weight="bold">
-                {todayEntry.day} {todayEntry.emoji}
-              </Text>
-              <Text
-                numberOfLines={1}
-                style={{ fontSize: 13, color: TEXT_TERTIARY, marginTop: 2 }}
-              >
-                {todayEntry.text}
-              </Text>
+              <Text weight="bold">Today</Text>
             </AnimatedCard>
           )}
         </View>
