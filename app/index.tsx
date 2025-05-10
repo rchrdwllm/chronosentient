@@ -38,7 +38,7 @@ function SentimentBar() {
 
   const weekPositive = weekEntries.filter((e) => e.mood === "Positive").length;
   const lastWeekPositive = lastWeekEntries.filter(
-    (e) => e.mood === "Positive"
+    (e) => e.mood === "Positive",
   ).length;
   const weekTotal = weekEntries.length || 1;
   const lastWeekTotal = lastWeekEntries.length || 1;
@@ -49,8 +49,8 @@ function SentimentBar() {
     diff > 0
       ? `${diff}% happier this week`
       : diff < 0
-      ? `${Math.abs(diff)}% less happy this week`
-      : `No change in happiness this week`;
+        ? `${Math.abs(diff)}% less happy this week`
+        : `No change in happiness this week`;
 
   return (
     <View style={styles.sentimentBarContainer}>
@@ -150,13 +150,13 @@ export default function Index() {
       else acc.neutral++;
       return acc;
     },
-    { positive: 0, neutral: 0, negative: 0 }
+    { positive: 0, neutral: 0, negative: 0 },
   );
   const total = weekEntries.length || 1;
 
   const weekPositive = weekEntries.filter((e) => e.mood === "Positive").length;
   const lastWeekPositive = lastWeekEntries.filter(
-    (e) => e.mood === "Positive"
+    (e) => e.mood === "Positive",
   ).length;
   const weekTotal = weekEntries.length || 1;
   const lastWeekTotal = lastWeekEntries.length || 1;
@@ -167,8 +167,8 @@ export default function Index() {
     diff > 0
       ? `${diff}% happier this week`
       : diff < 0
-      ? `${Math.abs(diff)}% less happy this week`
-      : `No change in happiness this week`;
+        ? `${Math.abs(diff)}% less happy this week`
+        : `No change in happiness this week`;
 
   return (
     <View style={styles.container}>
@@ -245,12 +245,12 @@ export default function Index() {
           color: TEXT_TERTIARY,
           fontSize: 15,
           textAlign: "center",
-          marginTop: 4,
+          marginTop: 16,
         }}
       >
         {diffText}
       </Text>
-      <Button
+      {/* <Button
         title="Clear AsyncStorage"
         onPress={() => {
           AsyncStorage.clear();
@@ -258,7 +258,7 @@ export default function Index() {
           console.log("AsyncStorage cleared");
           alert("AsyncStorage cleared");
         }}
-      />
+      /> */}
     </View>
   );
 }
@@ -269,6 +269,8 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_MAIN,
     paddingTop: 64,
     paddingHorizontal: 18,
+    justifyContent: "center",
+    alignItems: "center",
   },
   welcome: {
     fontSize: 28,
