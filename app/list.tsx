@@ -55,9 +55,15 @@ function AnimatedArrowButton({
 
 export default function ListScreen() {
   const router = useRouter();
-  const entries = useJournalStore((state) => state.entries);
-  const deleteEntry = useJournalStore((state) => state.deleteEntry);
+  const { entries, deleteEntry, initialize, isInitialized } = useJournalStore();
   const [weekOffset, setWeekOffset] = React.useState(0); // 0 = this week
+  
+  // Make sure store is initialized when the component mounts
+  React.useEffect(() => {
+    if (!isInitialized) {
+      initialize();
+    }
+  }, [isInitialized, initialize]);
 
   // Calculate the start and end of the current week (Sunday to Saturday), with offset
   const now = new Date();
