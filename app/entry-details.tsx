@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Text from "@/components/Text";
+import vader from "vader-sentiment";
 import { ChevronLeft, Trash2, Check } from "lucide-react-native";
 import {
   BACKGROUND_MAIN,
@@ -95,7 +96,17 @@ export default function EntryDetailsScreen() {
 
   const handleUpdate = () => {
     if (!date) return;
-    updateEntry(date.toString(), { text: entryText });
+
+    const sentiment = vader.SentimentIntensityAnalyzer.polarity_scores(entryText);
+    const newMood =
+      sentiment.compound >= 0.05
+        ? "Positive"
+        : sentiment.compound > -0.05
+        ? "Neutral"
+        : "Negative";
+    const newEmoji = newMood === "Positive" ? "😊" : newMood === "Neutral" ? "😐" : "😢";
+
+    updateEntry(date.toString(), { text: entryText, mood: newMood, emoji: newEmoji });
     router.back();
   };
 
