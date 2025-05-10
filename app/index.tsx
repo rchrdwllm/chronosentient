@@ -11,8 +11,15 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useJournalStore } from "@/stores/journalStore";
 import { useRouter } from "expo-router";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+
+// Generate a unique ID for each gradient
+const generateUniqueId = () =>
+  `grad-${Math.random().toString(36).substr(2, 9)}`;
 
 function SentimentBar() {
+  // Create a unique gradient ID for this component instance
+  const gradientId = React.useMemo(() => generateUniqueId(), []);
   const now = new Date();
   const weekStart = new Date(now);
   weekStart.setDate(now.getDate() - now.getDay());
@@ -55,12 +62,21 @@ function SentimentBar() {
   return (
     <View style={styles.sentimentBarContainer}>
       <View style={styles.sentimentBarBg}>
-        <View
-          style={[
-            styles.sentimentBarFill,
-            { width: `${Math.round(weekPercent)}%` },
-          ]}
-        />
+        <Svg height="12" width="100%">
+          <Defs>
+            <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
+              <Stop offset="0" stopColor="#71E089" stopOpacity="1" />
+              <Stop offset="1" stopColor="#71ABE0" stopOpacity="1" />
+            </LinearGradient>
+          </Defs>
+          <Rect
+            width={`${Math.round(weekPercent)}%`}
+            height="12"
+            fill={`url(#${gradientId})`}
+            rx="6"
+            ry="6"
+          />
+        </Svg>
       </View>
     </View>
   );
@@ -172,18 +188,22 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text weight="bold" style={styles.welcome}>
-        Welcome back!
-      </Text>
-      <Text weight="medium" style={styles.subtitle}>
-        This Week
-      </Text>
+      <View style={{ width: "100%" }}>
+        <Text weight="bold" style={styles.welcome}>
+          Welcome back!
+        </Text>
+        <Text weight="medium" style={styles.subtitle}>
+          This Week
+        </Text>
+      </View>
       <View style={styles.card}>
         <View style={styles.progressRow}>
           <CircularProgress
             percent={Math.round((sentimentCounts.positive / total) * 100)}
             color={PRIMARY}
             label="Positive"
+            useGradient={true}
+            gradientColors={["#71E089", "#71ABE0"]}
           />
           <View style={styles.legendColumn}>
             <Text style={styles.statPositive} weight="bold">
@@ -273,16 +293,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   welcome: {
-    fontSize: 28,
-    textAlign: "center",
+    fontSize: 32,
     marginBottom: 12,
     color: "#25283D",
   },
   subtitle: {
     fontSize: 16,
     color: TEXT_TERTIARY,
-    marginBottom: 10,
-    textAlign: "center",
+    marginBottom: 32,
   },
   card: {
     backgroundColor: "#fff",
@@ -348,11 +366,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 8,
     overflow: "hidden",
-  },
-  sentimentBarFill: {
-    height: 12,
-    backgroundColor: PRIMARY,
-    borderRadius: 8,
   },
   sentimentBarLabel: {
     flexDirection: "row",

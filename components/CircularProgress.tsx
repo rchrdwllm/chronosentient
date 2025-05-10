@@ -1,18 +1,36 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Svg, Circle } from "react-native-svg";
+import {
+  Svg,
+  Circle,
+  Defs,
+  LinearGradient,
+  Stop,
+  Text as SvgText,
+} from "react-native-svg";
 import Text from "@/components/Text";
 import { TEXT_LIGHT } from "@/constants/colors";
+
+// Generate a unique ID for each gradient
+const generateUniqueId = () =>
+  `grad-${Math.random().toString(36).substr(2, 9)}`;
 
 export default function CircularProgress({
   percent,
   color,
   label,
+  useGradient = false,
+  gradientColors = ["#6ac1ff", "#71E089"],
 }: {
   percent: number;
   color: string;
   label: string;
+  useGradient?: boolean;
+  gradientColors?: string[];
 }) {
+  // Create a unique gradient ID for this component instance
+  const gradientId = React.useMemo(() => generateUniqueId(), []);
+
   const radius = 32;
   const stroke = 7;
   const normalizedRadius = radius - stroke / 2;
@@ -22,6 +40,14 @@ export default function CircularProgress({
   return (
     <View style={styles.container}>
       <Svg width={radius * 2} height={radius * 2}>
+        {useGradient && (
+          <Defs>
+            <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+              <Stop offset="0" stopColor={gradientColors[0]} />
+              <Stop offset="1" stopColor={gradientColors[1]} />
+            </LinearGradient>
+          </Defs>
+        )}
         <Circle
           stroke={TEXT_LIGHT}
           fill="none"
@@ -31,7 +57,7 @@ export default function CircularProgress({
           strokeWidth={stroke}
         />
         <Circle
-          stroke={color}
+          stroke={useGradient ? `url(#${gradientId})` : color}
           fill="none"
           cx={radius}
           cy={radius}
@@ -46,9 +72,7 @@ export default function CircularProgress({
       <Text style={styles.percent} weight="bold">
         {percent}%
       </Text>
-      <Text style={styles.label} weight="bold">
-        {label}
-      </Text>
+      <Text style={styles.label}>{label}</Text>
     </View>
   );
 }
@@ -57,6 +81,11 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     flex: 1,
+  },
+  percentContainer: {
+    height: 25,
+    marginTop: 4,
+    alignSelf: "center",
   },
   percent: {
     fontSize: 16,
