@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Animated, Pressable, TextInput } from "react-native";
 import Text from "@/components/Text";
 import { useRouter } from "expo-router";
@@ -66,6 +66,18 @@ export default function AddScreen() {
   const router = useRouter();
   const [entry, setEntry] = useState("");
   const addEntry = useJournalStore((state) => state.addEntry);
+  const entries = useJournalStore((state) => state.entries);
+
+  const todayDateStringForComparison = useMemo(() => {
+    // We need to compare the date part of the ISO string.
+    // new Date().toISOString() gives 'YYYY-MM-DDTHH:mm:ss.sssZ'
+    // The date stored in journal entries is also an ISOString.
+    return new Date().toISOString().split("T")[0];
+  }, []);
+
+  const hasEntryForToday = useMemo(() => {
+    return entries.some((e) => e.date.startsWith(todayDateStringForComparison));
+  }, [entries, todayDateStringForComparison]);
 
   const handleAdd = () => {
     if (!entry.trim()) return;
@@ -115,22 +127,36 @@ export default function AddScreen() {
         <Text weight="medium" style={styles.headerTitle}>
           {getTodayString()}
         </Text>
-        <AnimatedIconButton style={styles.headerIcon} onPress={handleAdd}>
-          <Check color={PRIMARY} size={26} />
-        </AnimatedIconButton>
+        {hasEntryForToday ? (
+          <View style={styles.headerIcon} /> // Empty view to maintain spacing and alignment
+        ) : (
+          <AnimatedIconButton style={styles.headerIcon} onPress={handleAdd}>
+            <Check color={PRIMARY} size={26} />
+          </AnimatedIconButton>
+        )}
       </View>
-      <Text weight="bold" style={styles.prompt}>
-        Anong ganap mo today, fella?
-      </Text>
-      <TextInput
-        style={styles.textInput}
-        multiline
-        placeholder="Start writing your journal entry..."
-        placeholderTextColor={TEXT_TERTIARY}
-        value={entry}
-        onChangeText={setEntry}
-        textAlignVertical="top"
-      />
+      {hasEntryForToday ? (
+        <View style={styles.messageContainer}>
+          <Text style={styles.messageText}>
+            You already have added an entry for this day.
+          </Text>
+        </View>
+      ) : (
+        <>
+          <Text weight="bold" style={styles.prompt}>
+            Anong ganap mo today, fella?
+          </Text>
+          <TextInput
+            style={styles.textInput}
+            multiline
+            placeholder="Start writing your journal entry..."
+            placeholderTextColor={TEXT_TERTIARY}
+            value={entry}
+            onChangeText={setEntry}
+            textAlignVertical="top"
+          />
+        </>
+      )}
     </View>
   );
 }
@@ -174,5 +200,17 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     backgroundColor: BACKGROUND_TRANSPARENT,
     shadowColor: SHADOW_COLOR,
+  },
+  messageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  messageText: {
+    fontSize: 18,
+    color: TEXT_SECONDARY,
+    textAlign: "center",
+    fontFamily: "Inter_400Regular",
   },
 });

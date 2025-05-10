@@ -154,6 +154,9 @@ export default function EntryDetailsScreen() {
         <Text weight="bold" style={styles.day}>
           {day} {emoji}
         </Text>
+        {formattedDate ? (
+          <Text style={styles.date}>{formattedDate}</Text>
+        ) : null}
         <TextInput
           style={styles.textInput}
           multiline
