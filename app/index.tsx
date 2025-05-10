@@ -210,15 +210,15 @@ export default function Index() {
           />
           <View style={styles.legendColumn}>
             <Text style={styles.statPositive} weight="bold">
-              {Math.round((sentimentCounts.positive / total) * 100)}%{" "}
+              {Math.round((sentimentCounts.positive / total) * 100)}%{"  "}
               <Text style={styles.statLabel}>Positive</Text>
             </Text>
             <Text style={styles.statNeutral} weight="bold">
-              {Math.round((sentimentCounts.neutral / total) * 100)}%{" "}
+              {Math.round((sentimentCounts.neutral / total) * 100)}%{"  "}
               <Text style={styles.statLabel}>Neutral</Text>
             </Text>
             <Text style={styles.statNegative} weight="bold">
-              {Math.round((sentimentCounts.negative / total) * 100)}%{" "}
+              {Math.round((sentimentCounts.negative / total) * 100)}%{"  "}
               <Text style={styles.statLabel}>Negative</Text>
             </Text>
           </View>
