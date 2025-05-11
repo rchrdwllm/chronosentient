@@ -1,13 +1,15 @@
 import React, { useRef } from "react";
-import { View, StyleSheet, Animated, Pressable, Button } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Pressable,
+  Button,
+  useColorScheme,
+} from "react-native";
 import Text from "@/components/Text";
 import CircularProgress from "@/components/CircularProgress";
-import {
-  PRIMARY,
-  NEGATIVE,
-  TEXT_TERTIARY,
-  BACKGROUND_MAIN,
-} from "@/constants/colors";
+import { useThemeColors } from "@/constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useJournalStore } from "@/stores/journalStore";
 import { useRouter } from "expo-router";
@@ -18,6 +20,7 @@ const generateUniqueId = () =>
   `grad-${Math.random().toString(36).substr(2, 9)}`;
 
 function SentimentBar() {
+  const colors = useThemeColors();
   // Create a unique gradient ID for this component instance
   const gradientId = React.useMemo(() => generateUniqueId(), []);
   const now = new Date();
@@ -60,13 +63,36 @@ function SentimentBar() {
         : `No change in happiness this week`;
 
   return (
-    <View style={styles.sentimentBarContainer}>
-      <View style={styles.sentimentBarBg}>
+    <View
+      style={[
+        styles.sentimentBarContainer,
+        {
+          backgroundColor:
+            colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+          shadowColor: colors.shadow,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.sentimentBarBg,
+          {
+            backgroundColor:
+              colors.background.main === "#1A1A1F" ? "#3A3A42" : "#ECECEC",
+          },
+        ]}
+      >
         <Svg height="12" width="100%">
           <Defs>
             <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0" stopColor="#71E089" stopOpacity="1" />
-              <Stop offset="1" stopColor="#71ABE0" stopOpacity="1" />
+              <Stop
+                offset="0"
+                stopColor={
+                  colors.background.main === "#1A1A1F" ? "#5AC271" : "#71E089"
+                }
+                stopOpacity="1"
+              />
+              <Stop offset="1" stopColor={colors.primary} stopOpacity="1" />
             </LinearGradient>
           </Defs>
           <Rect
@@ -92,6 +118,7 @@ function AnimatedCard({
   children: React.ReactNode;
   onPress?: () => void;
 }) {
+  const colors = useThemeColors();
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -118,7 +145,16 @@ function AnimatedCard({
       onPressOut={handlePressOut}
       style={{ flex: 1 }}
     >
-      <Animated.View style={[styles.animatedCard, { transform: [{ scale }] }]}>
+      <Animated.View
+        style={[
+          styles.animatedCard,
+          {
+            transform: [{ scale }],
+            backgroundColor:
+              colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+          },
+        ]}
+      >
         {children}
       </Animated.View>
     </Pressable>
@@ -126,6 +162,7 @@ function AnimatedCard({
 }
 
 export default function Index() {
+  const colors = useThemeColors();
   const entries = useJournalStore((state) => state.entries);
 
   // Get entries for today, yesterday, and two days ago
@@ -190,36 +227,71 @@ export default function Index() {
         : `No change in happiness this week`;
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: colors.background.main }]}
+    >
       <View style={{ width: "100%" }}>
-        <Text weight="bold" style={styles.welcome}>
+        <Text
+          weight="bold"
+          style={[styles.welcome, { color: colors.text.primary }]}
+        >
           Welcome back!
         </Text>
-        <Text weight="medium" style={styles.subtitle}>
+        <Text
+          weight="medium"
+          style={[styles.subtitle, { color: colors.text.tertiary }]}
+        >
           This Week
         </Text>
       </View>
-      <View style={styles.card}>
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor:
+              colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+            shadowColor: colors.shadow,
+          },
+        ]}
+      >
         <View style={styles.progressRow}>
           <CircularProgress
             percent={Math.round((sentimentCounts.positive / total) * 100)}
-            color={PRIMARY}
+            color={colors.primary}
             label="Positive"
             useGradient={true}
-            gradientColors={["#71E089", "#71ABE0"]}
+            gradientColors={[
+              colors.background.main === "#1A1A1F" ? "#5AC271" : "#71E089",
+              colors.primary,
+            ]}
           />
           <View style={styles.legendColumn}>
-            <Text style={styles.statPositive} weight="bold">
+            <Text
+              style={[styles.statPositive, { color: colors.primary }]}
+              weight="bold"
+            >
               {Math.round((sentimentCounts.positive / total) * 100)}%{"  "}
-              <Text style={styles.statLabel}>Positive</Text>
+              <Text style={[styles.statLabel, { color: colors.text.primary }]}>
+                Positive
+              </Text>
             </Text>
-            <Text style={styles.statNeutral} weight="bold">
+            <Text
+              style={[styles.statNeutral, { color: colors.text.tertiary }]}
+              weight="bold"
+            >
               {Math.round((sentimentCounts.neutral / total) * 100)}%{"  "}
-              <Text style={styles.statLabel}>Neutral</Text>
+              <Text style={[styles.statLabel, { color: colors.text.primary }]}>
+                Neutral
+              </Text>
             </Text>
-            <Text style={styles.statNegative} weight="bold">
+            <Text
+              style={[styles.statNegative, { color: colors.negative }]}
+              weight="bold"
+            >
               {Math.round((sentimentCounts.negative / total) * 100)}%{"  "}
-              <Text style={styles.statLabel}>Negative</Text>
+              <Text style={[styles.statLabel, { color: colors.text.primary }]}>
+                Negative
+              </Text>
             </Text>
           </View>
         </View>
@@ -236,7 +308,9 @@ export default function Index() {
                 })
               }
             >
-              <Text weight="bold">Last 2 days</Text>
+              <Text weight="bold" style={{ color: colors.text.primary }}>
+                Last 2 days
+              </Text>
             </AnimatedCard>
           )}
           {yesterdayEntry && (
@@ -248,7 +322,9 @@ export default function Index() {
                 })
               }
             >
-              <Text weight="bold">Yesterday</Text>
+              <Text weight="bold" style={{ color: colors.text.primary }}>
+                Yesterday
+              </Text>
             </AnimatedCard>
           )}
           {todayEntry && (
@@ -257,7 +333,9 @@ export default function Index() {
                 router.push({ pathname: "/entry-details", params: todayEntry })
               }
             >
-              <Text weight="bold">Today</Text>
+              <Text weight="bold" style={{ color: colors.text.primary }}>
+                Today
+              </Text>
             </AnimatedCard>
           )}
         </View>
@@ -265,10 +343,11 @@ export default function Index() {
       <SentimentBar />
       <Text
         style={{
-          color: TEXT_TERTIARY,
+          color: colors.text.tertiary,
           fontSize: 15,
           textAlign: "center",
           marginTop: 16,
+          marginBottom: 20,
         }}
       >
         {diffText}
@@ -289,7 +368,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BACKGROUND_MAIN,
     paddingTop: 64,
     paddingHorizontal: 18,
     justifyContent: "center",
@@ -301,15 +379,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: TEXT_TERTIARY,
     marginBottom: 32,
   },
   card: {
-    backgroundColor: "#fff",
     borderRadius: 18,
     padding: 18,
     marginBottom: 22,
-    shadowColor: "#000",
     shadowOpacity: 0.04,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
@@ -328,9 +403,9 @@ const styles = StyleSheet.create({
     marginLeft: 18,
     gap: 10, // add vertical gap between legend items
   },
-  statPositive: { color: PRIMARY, fontSize: 16, marginBottom: 2 },
-  statNeutral: { color: TEXT_TERTIARY, fontSize: 16, marginBottom: 2 },
-  statNegative: { color: NEGATIVE, fontSize: 16 },
+  statPositive: { fontSize: 16, marginBottom: 2 },
+  statNeutral: { fontSize: 16, marginBottom: 2 },
+  statNegative: { fontSize: 16 },
   statLabel: { fontSize: 15 },
   segmentedRow: {
     flexDirection: "row",
@@ -340,23 +415,20 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   animatedCard: {
-    backgroundColor: "#fff",
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: "center",
   },
   animatedCardActive: {
-    backgroundColor: PRIMARY,
+    // Will be controlled dynamically with colors.primary
   },
   sentimentBarContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 6,
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 10,
     paddingHorizontal: 16,
-    shadowColor: "#000",
     shadowOpacity: 0.03,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },
@@ -364,10 +436,10 @@ const styles = StyleSheet.create({
   sentimentBarBg: {
     flex: 1,
     height: 12,
-    backgroundColor: "#ECECEC",
     borderRadius: 8,
     marginRight: 8,
     overflow: "hidden",
+    minWidth: 200,
   },
   sentimentBarLabel: {
     flexDirection: "row",

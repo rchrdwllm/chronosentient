@@ -9,7 +9,7 @@ import {
   Text as SvgText,
 } from "react-native-svg";
 import Text from "@/components/Text";
-import { TEXT_LIGHT } from "@/constants/colors";
+import { TEXT_LIGHT, useThemeColors } from "@/constants/colors";
 
 // Generate a unique ID for each gradient
 const generateUniqueId = () =>
@@ -30,7 +30,7 @@ export default function CircularProgress({
 }) {
   // Create a unique gradient ID for this component instance
   const gradientId = React.useMemo(() => generateUniqueId(), []);
-
+  const colors = useThemeColors();
   const radius = 32;
   const stroke = 7;
   const normalizedRadius = radius - stroke / 2;
@@ -49,7 +49,7 @@ export default function CircularProgress({
           </Defs>
         )}
         <Circle
-          stroke={TEXT_LIGHT}
+          stroke={colors.text.tertiary}
           fill="none"
           cx={radius}
           cy={radius}
@@ -69,10 +69,15 @@ export default function CircularProgress({
           transform={`rotate(-90 ${radius} ${radius})`}
         />
       </Svg>
-      <Text style={styles.percent} weight="bold">
+      <Text
+        style={[styles.percent, { color: colors.text.primary }]}
+        weight="bold"
+      >
         {percent}%
       </Text>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.text.primary }]}>
+        {label}
+      </Text>
     </View>
   );
 }

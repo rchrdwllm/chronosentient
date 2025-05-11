@@ -168,12 +168,21 @@ export const getColors = (colorScheme: ColorSchemeName = "light") => {
 };
 
 /**
- * Helper hook to get colors based on the current system theme
- * @returns Colors object for the current system theme
+ * Helper hook to get colors based on the current theme context or system theme
+ * @returns Colors object for the current theme
  */
 export const useThemeColors = () => {
-  const colorScheme = useColorScheme();
-  return getColors(colorScheme);
+  try {
+    // Try to import the ThemeContext
+    // This needs to be done conditionally to avoid circular dependencies
+    const { useTheme } = require('@/context/ThemeContext');
+    const { colors } = useTheme();
+    return colors;
+  } catch (e) {
+    // Fallback to system theme if ThemeContext is not available
+    const colorScheme = useColorScheme();
+    return getColors(colorScheme);
+  }
 };
 
 // Default colors (light mode) for backward compatibility

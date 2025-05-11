@@ -1,16 +1,9 @@
 import React, { useRef } from "react";
-import { View, StyleSheet, Animated, Pressable } from "react-native";
+import { View, StyleSheet, Animated, Pressable, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Home, Plus, List, ChartSpline, Settings2 } from "lucide-react-native";
 import { useRouter, usePathname } from "expo-router";
-import {
-  PRIMARY,
-  TEXT_SECONDARY,
-  TEXT_TERTIARY,
-  TEXT_WHITE,
-  BACKGROUND_MAIN,
-  GRADIENT_TRANSPARENT,
-} from "@/constants/colors";
+import { useTheme, useSystemBars } from "@/context/ThemeContext";
 
 const TABS = [
   { key: "home", icon: Home, route: "/" },
@@ -53,21 +46,35 @@ function AnimatedTabButton({ style, children, ...props }: any) {
 export default function BottomNavigation() {
   const router = useRouter();
   const pathname = usePathname();
+  const { colors, theme } = useTheme();
+  const { isDark } = useSystemBars();
 
   return (
-    <View style={styles.containerWrapper}>
+    <View style={[
+      styles.containerWrapper, 
+      { 
+        backgroundColor: colors.background.main,
+        paddingBottom: Platform.OS === 'ios' ? 20 : 0 
+      }
+    ]}>
       <LinearGradient
-        colors={[GRADIENT_TRANSPARENT, BACKGROUND_MAIN]}
+        colors={[colors.gradients.transparent, colors.background.main]}
         style={styles.gradient}
         pointerEvents="none"
       />
-      <View style={styles.container}>
+      <View style={[
+        styles.container, 
+        { 
+          backgroundColor: colors.background.main,
+          borderTopColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', 
+        }
+      ]}>
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.route;
-          const iconColor = isActive ? TEXT_SECONDARY : TEXT_TERTIARY;
+          const iconColor = isActive ? colors.text.secondary : colors.text.tertiary;
           const bgStyle =
-            tab.key === "add" ? styles.addButton : styles.tabButton;
+            tab.key === "add" ? [styles.addButton, { backgroundColor: colors.primary }] : styles.tabButton;
 
           return (
             <AnimatedTabButton
@@ -81,7 +88,7 @@ export default function BottomNavigation() {
               }}
             >
               <Icon
-                color={tab.key === "add" ? TEXT_WHITE : iconColor}
+                color={tab.key === "add" ? colors.text.white : iconColor}
                 size={28}
               />
             </AnimatedTabButton>
@@ -94,8 +101,8 @@ export default function BottomNavigation() {
 
 const styles = StyleSheet.create({
   containerWrapper: {
-    backgroundColor: BACKGROUND_MAIN,
     position: "relative",
+    elevation: 8,
   },
   gradient: {
     position: "absolute",
@@ -111,15 +118,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 10,
     paddingTop: 12,
-    backgroundColor: BACKGROUND_MAIN,
     zIndex: 2,
+    borderTopWidth: 1,
   },
   tabButton: {
     alignItems: "center",
     justifyContent: "center",
   },
   addButton: {
-    backgroundColor: PRIMARY,
     borderRadius: 10,
     height: 52,
     width: 52,
