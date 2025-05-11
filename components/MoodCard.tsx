@@ -8,12 +8,7 @@ import {
 } from "react-native";
 import Text from "@/components/Text";
 import { Trash2 } from "lucide-react-native";
-import {
-  NEGATIVE,
-  PRIMARY,
-  TEXT_TERTIARY,
-  TEXT_WHITE,
-} from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
 
 export type MoodCardProps = {
   day: string;
@@ -32,6 +27,7 @@ export default function MoodCard({
   onPress,
   onDelete,
 }: MoodCardProps) {
+  const { colors } = useTheme();
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(1)).current;
@@ -102,26 +98,26 @@ export default function MoodCard({
 
   return (
     <View style={{ position: "relative" }}>
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          styles.trashContainer,
-          {
-            opacity: showTrash,
-            right: 24,
-            transform: [
-              {
-                scale: showTrash.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.7, 1],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        <View style={styles.trashCircle}>
-          <Trash2 color={TEXT_WHITE} size={22} />
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        styles.trashContainer,
+        {
+          opacity: showTrash,
+          right: 24,
+          transform: [
+            {
+              scale: showTrash.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.7, 1],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
+      <View style={[styles.trashCircle, { backgroundColor: colors.negative, shadowColor: colors.negative }]}>
+          <Trash2 color={colors.text.white} size={22} />
         </View>
       </Animated.View>
       <Animated.View
@@ -136,14 +132,17 @@ export default function MoodCard({
           <View
             style={[
               styles.card,
-              mood === "Positive" ? styles.positiveCard : styles.negativeCard,
+              { 
+                backgroundColor: colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+                shadowColor: colors.shadow 
+              }
             ]}
           >
             <View style={[styles.cardHeader]}>
-              <Text weight="bold" style={styles.day}>
+              <Text weight="bold" style={[styles.day, { color: colors.text.primary }]}>
                 {day}
               </Text>
-              <Text numberOfLines={1} style={styles.text}>
+              <Text numberOfLines={1} style={[styles.text, { color: colors.text.tertiary }]}>
                 {text}
               </Text>
             </View>
@@ -152,7 +151,7 @@ export default function MoodCard({
                 <Text
                   style={[
                     styles.mood,
-                    mood === "Positive" ? styles.positive : styles.negative,
+                    { color: mood === "Positive" ? colors.primary : colors.negative }
                   ]}
                 >
                   {mood}
@@ -169,12 +168,13 @@ export default function MoodCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 16,
     marginBottom: 14,
     shadowOffset: { width: 0, height: 2 },
     flexDirection: "row",
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
   },
   cardHeader: {
     flex: 1,
@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
   day: {
     fontSize: 16,
     flex: 1,
-    color: "#25283D",
   },
   mood: {
     fontSize: 13,
@@ -192,17 +191,16 @@ const styles = StyleSheet.create({
     width: 64,
   },
   positive: {
-    color: PRIMARY,
+    // Color now applied dynamically
   },
   negative: {
-    color: NEGATIVE,
+    // Color now applied dynamically
   },
   emoji: {
     fontSize: 32,
     marginLeft: 2,
   },
   text: {
-    color: TEXT_TERTIARY,
     fontSize: 14,
     marginLeft: 2,
   },
@@ -217,13 +215,13 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   trashCircle: {
-    backgroundColor: NEGATIVE,
+    backgroundColor: "#E05C71", // Default value, will be overridden with colors.negative
     borderRadius: 24,
     width: 48,
     height: 48,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: NEGATIVE,
+    shadowColor: "#E05C71", // Default value, will be overridden with colors.negative
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,

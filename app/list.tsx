@@ -10,7 +10,7 @@ import { useRouter } from "expo-router";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import Text from "@/components/Text";
 import MoodCard from "@/components/MoodCard";
-import { BACKGROUND_MAIN, TEXT_TERTIARY } from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
 import { useJournalStore } from "@/stores/journalStore";
 
 function AnimatedArrowButton({
@@ -20,6 +20,7 @@ function AnimatedArrowButton({
   onPress: () => void;
   children: React.ReactNode;
 }) {
+  const { colors } = useTheme();
   const scale = React.useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -54,6 +55,7 @@ function AnimatedArrowButton({
 }
 
 export default function ListScreen() {
+  const { colors } = useTheme();
   const router = useRouter();
   const { entries, deleteEntry, initialize, isInitialized } = useJournalStore();
   const [weekOffset, setWeekOffset] = React.useState(0); // 0 = this week
@@ -98,26 +100,26 @@ export default function ListScreen() {
   });
 
   return (
-    <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN, paddingTop: 56 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background.main, paddingTop: 56 }}>
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.weekHeaderRow}>
-          <Text weight="bold" style={styles.heading}>
+          <Text weight="bold" style={[styles.heading, { color: colors.text.primary }]}>
             {weekRangeLabel}
           </Text>
           <View style={styles.arrowsContainer}>
             <AnimatedArrowButton onPress={() => setWeekOffset((w) => w - 1)}>
-              <ChevronLeft color={TEXT_TERTIARY} size={22} />
+              <ChevronLeft color={colors.text.tertiary} size={22} />
             </AnimatedArrowButton>
             <AnimatedArrowButton onPress={() => setWeekOffset((w) => w + 1)}>
-              <ChevronRight color={TEXT_TERTIARY} size={22} />
+              <ChevronRight color={colors.text.tertiary} size={22} />
             </AnimatedArrowButton>
           </View>
         </View>
         {weekEntries.length === 0 ? (
-          <Text style={styles.noEntriesText}>No entries for this week.</Text>
+          <Text style={[styles.noEntriesText, { color: colors.text.tertiary }]}>No entries for this week.</Text>
         ) : (
           weekEntries.map((entry, idx) => (
             <MoodCard
@@ -144,7 +146,6 @@ export default function ListScreen() {
 const styles = StyleSheet.create({
   heading: {
     fontSize: 32,
-    color: "#25283D",
     marginLeft: 4,
     flex: 1,
     textAlign: "left",
@@ -167,7 +168,6 @@ const styles = StyleSheet.create({
   },
   noEntriesText: {
     fontSize: 18,
-    color: TEXT_TERTIARY,
     textAlign: "center",
     marginTop: 32,
     marginBottom: 24,

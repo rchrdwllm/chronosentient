@@ -11,14 +11,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import Text from "@/components/Text";
 import vader from "vader-sentiment";
 import { ChevronLeft, Trash2, Check } from "lucide-react-native";
-import {
-  BACKGROUND_MAIN,
-  TEXT_PRIMARY,
-  TEXT_TERTIARY,
-  PRIMARY,
-  TEXT_SECONDARY,
-  NEGATIVE,
-} from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
 import { useJournalStore } from "@/stores/journalStore";
 
 function AnimatedIconButton({ onPress, children, style }: any) {
@@ -58,6 +51,7 @@ function AnimatedIconButton({ onPress, children, style }: any) {
 }
 
 export default function EntryDetailsScreen() {
+  const { colors } = useTheme();
   const router = useRouter();
   const params = useLocalSearchParams();
   const { day, mood, emoji, text, date } = params;
@@ -136,23 +130,23 @@ export default function EntryDetailsScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: BACKGROUND_MAIN }}>
-      <View style={styles.header}>
+    <View style={{ flex: 1, backgroundColor: colors.background.main }}>
+      <View style={[styles.header, { backgroundColor: colors.background.main }]}>
         <AnimatedIconButton
           style={styles.headerBackBtn}
           onPress={() => router.back()}
         >
-          <ChevronLeft color={TEXT_TERTIARY} size={28} />
+          <ChevronLeft color={colors.text.tertiary} size={28} />
         </AnimatedIconButton>
         {formattedTime ? (
-          <Text style={styles.headerTime}>{formattedTime}</Text>
+          <Text style={[styles.headerTime, { color: colors.text.tertiary }]}>{formattedTime}</Text>
         ) : null}
         <View style={styles.headerActions}>
           <AnimatedIconButton onPress={handleDelete}>
-            <Trash2 color={TEXT_TERTIARY} size={22} />
+            <Trash2 color={colors.text.tertiary} size={22} />
           </AnimatedIconButton>
           <AnimatedIconButton onPress={handleUpdate}>
-            <Check color={PRIMARY} size={22} />
+            <Check color={colors.primary} size={22} />
           </AnimatedIconButton>
         </View>
       </View>
@@ -163,34 +157,34 @@ export default function EntryDetailsScreen() {
             {
               color:
                 mood?.toString().toLowerCase() === "negative"
-                  ? NEGATIVE
-                  : PRIMARY,
+                  ? colors.negative
+                  : colors.primary,
             },
           ]}
           weight="medium"
         >
           {mood?.toString().toUpperCase()}
         </Text>
-        <Text weight="bold" style={styles.day}>
+        <Text weight="bold" style={[styles.day, { color: colors.text.primary }]}>
           {day} {emoji}
         </Text>
         {formattedDate ? (
-          <Text style={styles.date}>{formattedDate}</Text>
+          <Text style={[styles.date, { color: colors.text.tertiary }]}>{formattedDate}</Text>
         ) : null}
         <TextInput
-          style={styles.textInput}
+          style={[styles.textInput, { color: colors.text.secondary }]}
           multiline
           value={entryText}
           onChangeText={setEntryText}
           placeholder="Edit your journal entry..."
-          placeholderTextColor={TEXT_TERTIARY}
+          placeholderTextColor={colors.text.tertiary}
           textAlignVertical="top"
           editable={isEditable}
         />
         {!isEditable && (
           <Text
             style={{
-              color: TEXT_TERTIARY,
+              color: colors.text.tertiary,
               marginBottom: 48,
               textAlign: "center",
             }}
@@ -211,7 +205,6 @@ const styles = StyleSheet.create({
     paddingTop: 56,
     paddingHorizontal: 20,
     paddingBottom: 16,
-    backgroundColor: BACKGROUND_MAIN,
   },
   headerBackBtn: {
     zIndex: 1,
@@ -227,7 +220,6 @@ const styles = StyleSheet.create({
     right: 0,
     textAlign: "center",
     fontSize: 16,
-    color: TEXT_TERTIARY,
     top: 60,
     zIndex: 0,
     pointerEvents: "none",
@@ -245,21 +237,17 @@ const styles = StyleSheet.create({
   day: {
     fontSize: 28,
     marginBottom: 0,
-    color: TEXT_PRIMARY,
   },
   date: {
     fontSize: 16,
-    color: TEXT_TERTIARY,
     marginBottom: 12,
   },
   text: {
     fontSize: 16,
-    color: TEXT_TERTIARY,
     lineHeight: 26,
   },
   textInput: {
     fontSize: 16,
-    color: TEXT_SECONDARY,
     lineHeight: 40,
     marginTop: 16,
     padding: 0,
