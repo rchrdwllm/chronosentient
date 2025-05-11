@@ -11,6 +11,7 @@ import BottomNavigation from "@/components/BottomNavigation";
 import { View, Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { ThemeProvider, useTheme, useSystemBars } from "@/context/ThemeContext";
+import { FontProvider } from "@/context/FontContext";
 
 function AppLayout() {
   const { colors } = useTheme();
@@ -54,7 +55,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <AppLayout />
+      <FontProvider>
+        <AppLayout />
+      </FontProvider>
     </ThemeProvider>
   );
 }

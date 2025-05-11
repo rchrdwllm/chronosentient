@@ -3,18 +3,21 @@ import { View, Switch, StyleSheet } from "react-native";
 import Text from "@/components/Text";
 import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useTheme } from "@/context/ThemeContext";
+import { useFont } from "@/context/FontContext";
 
 export default function SettingsScreen() {
   const { theme, toggleTheme, setIsUsingSystemTheme, isUsingSystemTheme, colors } = useTheme();
+  const { isLargeTextEnabled, setIsLargeTextEnabled } = useFont();
   const [darkMode, setDarkMode] = useState(theme === 'dark');
   const [useSystemTheme, setUseSystemTheme] = useState(isUsingSystemTheme);
-  const [largeText, setLargeText] = useState(false);
+  const [largeText, setLargeText] = useState(isLargeTextEnabled);
   
-  // Sync the darkMode state with the theme
+  // Sync the darkMode and largeText states with their context values
   useEffect(() => {
     setDarkMode(theme === 'dark');
     setUseSystemTheme(isUsingSystemTheme);
-  }, [theme, isUsingSystemTheme]);
+    setLargeText(isLargeTextEnabled);
+  }, [theme, isUsingSystemTheme, isLargeTextEnabled]);
   
   // Handle dark mode toggle
   const handleDarkModeToggle = (value: boolean) => {
@@ -76,7 +79,10 @@ export default function SettingsScreen() {
           <Text style={[styles.label, { color: colors.text.primary }]}>Large Text</Text>
           <Switch
             value={largeText}
-            onValueChange={setLargeText}
+            onValueChange={(value) => {
+              setLargeText(value);
+              setIsLargeTextEnabled(value);
+            }}
             trackColor={{ false: "#ccc", true: colors.primary }}
             thumbColor={largeText ? "#ffffff" : "#f4f3f4"}
           />
