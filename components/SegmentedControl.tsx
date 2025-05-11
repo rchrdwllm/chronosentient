@@ -6,7 +6,7 @@ import {
   Animated,
   LayoutChangeEvent,
 } from "react-native";
-import { TEXT_PRIMARY, TEXT_TERTIARY } from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
 
 const SEGMENTS = ["Week", "Month"];
 
@@ -17,6 +17,7 @@ export default function SegmentedControl({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const { colors, theme } = useTheme();
   const indicatorX = useRef(new Animated.Value(0)).current;
   const animatedIndex = useRef(
     new Animated.Value(SEGMENTS.indexOf(value))
@@ -66,7 +67,13 @@ export default function SegmentedControl({
   };
 
   return (
-    <View style={styles.segmentedContainer} onLayout={onLayout}>
+    <View 
+      style={[
+        styles.segmentedContainer, 
+        { backgroundColor: theme === 'dark' ? "#3A3A42" : "#ECECEC" }
+      ]} 
+      onLayout={onLayout}
+    >
       {segmentWidth > 0 && (
         <Animated.View
           style={[
@@ -74,6 +81,7 @@ export default function SegmentedControl({
             {
               width: segmentWidth - 4,
               transform: [{ translateX: indicatorX }, { scale }],
+              backgroundColor: theme === 'dark' ? "#2D2D35" : "#fff",
             },
           ]}
         />
@@ -83,8 +91,8 @@ export default function SegmentedControl({
           inputRange: [0, 1],
           outputRange:
             i === 0
-              ? [TEXT_PRIMARY, TEXT_TERTIARY]
-              : [TEXT_TERTIARY, TEXT_PRIMARY],
+              ? [colors.text.primary, colors.text.tertiary]
+              : [colors.text.tertiary, colors.text.primary],
         });
         return (
           <Pressable

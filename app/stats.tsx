@@ -2,13 +2,7 @@ import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
-import {
-  BACKGROUND_MAIN,
-  PRIMARY,
-  NEGATIVE,
-  TEXT_TERTIARY,
-  TEXT_LIGHT,
-} from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
 import SegmentedControl from "@/components/SegmentedControl";
 import CircularProgress from "@/components/CircularProgress";
 import BarChart from "@/components/BarChart";
@@ -17,6 +11,8 @@ import { JournalEntry } from "@/types";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 
 export default function StatsScreen() {
+  const { colors } = useTheme();
+  const isDark = colors.background.main === "#1A1A1F";
   const [segment, setSegment] = React.useState("Week");
   const [weekOffset, setWeekOffset] = React.useState(0); // 0 = this week
   const [monthOffset, setMonthOffset] = React.useState(0); // 0 = this month
@@ -73,30 +69,30 @@ export default function StatsScreen() {
       else acc.neutral++;
       return acc;
     },
-    { positive: 0, neutral: 0, negative: 0 }
+    { positive: 0, neutral: 0, negative: 0 },
   );
   const weekTotal = weekEntries.length || 1;
   const progressData = [
     {
       percent: Math.round((weekSentimentCounts.positive / weekTotal) * 100),
-      color: PRIMARY,
+      color: colors.primary,
       label: "Positive",
     },
     {
       percent: Math.round((weekSentimentCounts.neutral / weekTotal) * 100),
-      color: TEXT_TERTIARY,
+      color: colors.text.tertiary,
       label: "Neutral",
     },
     {
       percent: Math.round((weekSentimentCounts.negative / weekTotal) * 100),
-      color: NEGATIVE,
+      color: colors.negative,
       label: "Negative",
     },
   ];
 
   // Map day label to entry for this week
   const entryByDay = Object.fromEntries(
-    weekEntries.map((entry) => [entry.day, entry])
+    weekEntries.map((entry) => [entry.day, entry]),
   );
   // Build barData for all days (show only this week's entries)
   const barData = weekDays.map((d) => {
@@ -119,7 +115,7 @@ export default function StatsScreen() {
   const monthDate = new Date(
     today.getFullYear(),
     today.getMonth() + monthOffset,
-    1
+    1,
   );
   const year = monthDate.getFullYear();
   const month = monthDate.getMonth();
@@ -140,7 +136,7 @@ export default function StatsScreen() {
       // Normalize to YYYY-MM-DD
       const dateKey = entry.date.slice(0, 10);
       return [dateKey, entry];
-    })
+    }),
   );
 
   // Filter entries for the current month
@@ -157,23 +153,23 @@ export default function StatsScreen() {
       else acc.neutral++;
       return acc;
     },
-    { positive: 0, neutral: 0, negative: 0 }
+    { positive: 0, neutral: 0, negative: 0 },
   );
   const monthTotal = monthEntries.length || 1;
   const monthProgressData = [
     {
       percent: Math.round((monthSentimentCounts.positive / monthTotal) * 100),
-      color: PRIMARY,
+      color: colors.primary,
       label: "Positive",
     },
     {
       percent: Math.round((monthSentimentCounts.neutral / monthTotal) * 100),
-      color: TEXT_TERTIARY,
+      color: colors.text.tertiary,
       label: "Neutral",
     },
     {
       percent: Math.round((monthSentimentCounts.negative / monthTotal) * 100),
-      color: NEGATIVE,
+      color: colors.negative,
       label: "Negative",
     },
   ];
@@ -187,7 +183,7 @@ export default function StatsScreen() {
   }
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-      day
+      day,
     ).padStart(2, "0")}`;
     week.push({
       day,
@@ -206,50 +202,77 @@ export default function StatsScreen() {
 
   // Helper to get color by sentiment
   function getSentimentColor(entry: JournalEntry | undefined) {
-    if (!entry) return "#eee";
-    if (entry.mood === "Positive") return PRIMARY;
-    if (entry.mood === "Negative") return NEGATIVE;
-    if (entry.mood === "Neutral") return TEXT_TERTIARY;
-    return "#eee";
+    if (!entry) return isDark ? colors.text.tertiary : "#eee";
+    if (entry.mood === "Positive") return colors.primary;
+    if (entry.mood === "Negative") return colors.negative;
+    if (entry.mood === "Neutral") return colors.text.tertiary;
+    return isDark ? colors.text.tertiary : "#eee";
   }
 
   return (
-    <View style={styles.container}>
-      <Text weight="bold" style={styles.header}>
+    <View
+      style={[styles.container, { backgroundColor: colors.background.main }]}
+    >
+      <Text
+        weight="bold"
+        style={[styles.header, { color: colors.text.primary }]}
+      >
         Statistics
       </Text>
       <View style={styles.segmentedControlContainer}>
         <SegmentedControl value={segment} onChange={setSegment} />
-        <View style={styles.progressRow}>
+        <View
+          style={[
+            styles.progressRow,
+            {
+              backgroundColor:
+                colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+            },
+          ]}
+        >
           {(segment === "Month" ? monthProgressData : progressData).map(
             (item) => (
               <CircularProgress key={item.label} {...item} />
-            )
+            ),
           )}
         </View>
         {segment === "Month" ? (
-          <View style={styles.calendarContainer}>
+          <View
+            style={[
+              styles.calendarContainer,
+              {
+                backgroundColor:
+                  colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+              },
+            ]}
+          >
             <View style={styles.weekHeaderRow}>
               <Pressable
                 onPress={() => setMonthOffset((m) => m - 1)}
                 style={styles.arrowBtn}
               >
-                <ChevronLeft color={TEXT_TERTIARY} size={22} />
+                <ChevronLeft color={colors.text.tertiary} size={22} />
               </Pressable>
-              <Text weight="bold" style={styles.barChartTitle}>
+              <Text
+                weight="bold"
+                style={[styles.barChartTitle, { color: colors.text.primary }]}
+              >
                 {monthLabel}
               </Text>
               <Pressable
                 onPress={() => setMonthOffset((m) => m + 1)}
                 style={styles.arrowBtn}
               >
-                <ChevronRight color={TEXT_TERTIARY} size={22} />
+                <ChevronRight color={colors.text.tertiary} size={22} />
               </Pressable>
             </View>
             {/* Weekday headers in a separate row */}
             <View style={styles.calendarHeaderRow}>
               {["S", "M", "T", "W", "T", "F", "S"].map((d, idx) => (
-                <Text key={idx} style={styles.calendarHeader}>
+                <Text
+                  key={idx}
+                  style={[styles.calendarHeader, { color: colors.text.light }]}
+                >
                   {d}
                 </Text>
               ))}
@@ -274,14 +297,28 @@ export default function StatsScreen() {
                             })
                           }
                         >
-                          <Text style={styles.calendarDayText}>{cell.day}</Text>
+                          <Text
+                            style={[
+                              styles.calendarDayText,
+                              { color: "#FFFFFF" },
+                            ]}
+                          >
+                            {cell.day}
+                          </Text>
                         </Pressable>
                       ) : (
-                        <View key={`day-${i}-${j}`} style={styles.calendarDay}>
+                        <View
+                          key={`day-${i}-${j}`}
+                          style={[
+                            styles.calendarDay,
+                            { backgroundColor: isDark ? "#2D2D35" : "#eee" },
+                          ]}
+                        >
                           <Text
                             style={[
                               styles.calendarDayText,
                               styles.calendarDayTextMuted,
+                              { color: colors.text.tertiary },
                             ]}
                           >
                             {cell.day}
@@ -293,32 +330,43 @@ export default function StatsScreen() {
                         key={`empty-${i}-${j}`}
                         style={styles.calendarDay}
                       />
-                    )
+                    ),
                   )}
                 </View>
               ))}
             </View>
           </View>
         ) : (
-          <View style={styles.barChartContainer}>
+          <View
+            style={[
+              styles.barChartContainer,
+              {
+                backgroundColor:
+                  colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+              },
+            ]}
+          >
             <View style={styles.weekHeaderRow}>
               <Pressable
                 onPress={() => setWeekOffset((w) => w - 1)}
                 style={styles.arrowBtn}
               >
-                <ChevronLeft color={TEXT_TERTIARY} size={22} />
+                <ChevronLeft color={colors.text.tertiary} size={22} />
               </Pressable>
-              <Text weight="bold" style={styles.barChartTitle}>
+              <Text
+                weight="bold"
+                style={[styles.barChartTitle, { color: colors.text.primary }]}
+              >
                 {weekRangeLabel}
               </Text>
               <Pressable
                 onPress={() => setWeekOffset((w) => w + 1)}
                 style={styles.arrowBtn}
               >
-                <ChevronRight color={TEXT_TERTIARY} size={22} />
+                <ChevronRight color={colors.text.tertiary} size={22} />
               </Pressable>
             </View>
-            <BarChart data={barData} />
+            <BarChart data={barData} theme={isDark ? "dark" : "light"} />
           </View>
         )}
       </View>
@@ -329,7 +377,6 @@ export default function StatsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BACKGROUND_MAIN,
     paddingTop: 56,
   },
   segmentedControlContainer: {
@@ -344,12 +391,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 18,
-    backgroundColor: "#fff",
     borderRadius: 18,
     paddingVertical: 18,
   },
   barChartContainer: {
-    backgroundColor: "#fff",
     borderRadius: 18,
     paddingVertical: 18,
     marginTop: 0,
@@ -373,7 +418,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   calendarContainer: {
-    backgroundColor: "#fff",
     borderRadius: 18,
     padding: 18,
     marginTop: 0,
@@ -387,7 +431,6 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
     fontWeight: "bold",
-    color: TEXT_LIGHT,
     marginBottom: 0,
   },
   calendarGrid: {
@@ -400,17 +443,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#eee",
     margin: 4,
     minWidth: 0,
     maxWidth: 48,
   },
   calendarDayText: {
     fontSize: 14,
-    color: BACKGROUND_MAIN,
   },
   calendarDayTextMuted: {
-    color: TEXT_TERTIARY,
     fontWeight: "normal",
   },
   calendarEmoji: {
@@ -420,6 +460,5 @@ const styles = StyleSheet.create({
   calendarMood: {
     fontSize: 12,
     textAlign: "center",
-    color: TEXT_LIGHT,
   },
 });

@@ -49,7 +49,7 @@ export default function CircularProgress({
           </Defs>
         )}
         <Circle
-          stroke={colors.text.tertiary}
+          stroke={colors.background.main}
           fill="none"
           cx={radius}
           cy={radius}

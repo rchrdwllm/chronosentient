@@ -77,8 +77,7 @@ function SentimentBar() {
         style={[
           styles.sentimentBarBg,
           {
-            backgroundColor:
-              colors.background.main === "#1A1A1F" ? "#3A3A42" : "#ECECEC",
+            backgroundColor: colors.background.main,
           },
         ]}
       >

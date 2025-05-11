@@ -1,28 +1,28 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Text from "@/components/Text";
-import {
-  PRIMARY,
-  NEGATIVE,
-  TEXT_TERTIARY,
-  TEXT_LIGHT,
-  BACKGROUND_MAIN,
-} from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
+import { useThemeColors } from "@/constants/colors";
 
 export default function BarChart({
   data,
+  theme,
 }: {
   data: {
     day: string;
     sentiment: "Positive" | "Negative" | "Neutral" | "Missing";
   }[];
+  theme?: string;
 }) {
+  const { colors: themeColors } = useTheme();
+  const colors = useThemeColors();
   const colorMap = {
-    Positive: PRIMARY,
-    Negative: NEGATIVE,
-    Neutral: TEXT_TERTIARY,
-    Missing: BACKGROUND_MAIN,
+    Positive: themeColors.primary,
+    Negative: themeColors.negative,
+    Neutral: themeColors.text.tertiary,
+    Missing: colors.background.main,
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.barRow}>
@@ -34,24 +34,39 @@ export default function BarChart({
                 { backgroundColor: colorMap[item.sentiment] },
               ]}
             />
-            <Text style={styles.dayLabel}>{item.day[0]}</Text>
+            <Text style={[styles.dayLabel, { color: colors.text.tertiary }]}>
+              {item.day[0]}
+            </Text>
           </View>
         ))}
       </View>
       <View style={styles.legendRow}>
         <View style={styles.legendItem}>
-          <View style={[styles.legendColor, { backgroundColor: PRIMARY }]} />
-          <Text style={styles.legendText}>Positive</Text>
-        </View>
-        <View style={styles.legendItem}>
-          <View style={[styles.legendColor, { backgroundColor: NEGATIVE }]} />
-          <Text style={styles.legendText}>Negative</Text>
+          <View
+            style={[styles.legendColor, { backgroundColor: colors.primary }]}
+          />
+          <Text style={[styles.legendText, { color: colors.text.primary }]}>
+            Positive
+          </Text>
         </View>
         <View style={styles.legendItem}>
           <View
-            style={[styles.legendColor, { backgroundColor: TEXT_TERTIARY }]}
+            style={[styles.legendColor, { backgroundColor: colors.negative }]}
           />
-          <Text style={styles.legendText}>Neutral</Text>
+          <Text style={[styles.legendText, { color: colors.text.primary }]}>
+            Negative
+          </Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View
+            style={[
+              styles.legendColor,
+              { backgroundColor: colors.text.tertiary },
+            ]}
+          />
+          <Text style={[styles.legendText, { color: colors.text.primary }]}>
+            Neutral
+          </Text>
         </View>
       </View>
     </View>
@@ -81,7 +96,6 @@ const styles = StyleSheet.create({
   },
   dayLabel: {
     fontSize: 13,
-    color: TEXT_TERTIARY,
   },
   legendRow: {
     flexDirection: "row",

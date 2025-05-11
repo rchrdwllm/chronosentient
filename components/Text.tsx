@@ -6,7 +6,7 @@ import {
   Inter_500Medium,
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
-import { TEXT_PRIMARY } from "@/constants/colors";
+import { TEXT_PRIMARY, useThemeColors } from "@/constants/colors";
 
 export type TextProps = RNTextProps & {
   weight?: "regular" | "medium" | "bold";
@@ -24,6 +24,7 @@ export default function Text({
     Inter_500Medium,
     Inter_700Bold,
   });
+  const colors = useThemeColors();
 
   if (!fontsLoaded) {
     return null;
@@ -33,11 +34,14 @@ export default function Text({
     weight === "bold"
       ? "Inter_700Bold"
       : weight === "medium"
-      ? "Inter_500Medium"
-      : "Inter_400Regular";
+        ? "Inter_500Medium"
+        : "Inter_400Regular";
 
   return (
-    <RNText style={[{ fontFamily, color: TEXT_PRIMARY }, style]} {...props}>
+    <RNText
+      style={[{ fontFamily, color: colors.text.primary }, style]}
+      {...props}
+    >
       {children}
     </RNText>
   );
