@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
-import { View, StyleSheet, Animated, Pressable, Platform } from "react-native";
+import { useSystemBars, useTheme } from "@/context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { Home, Plus, List, ChartSpline, Settings2 } from "lucide-react-native";
-import { useRouter, usePathname } from "expo-router";
-import { useTheme, useSystemBars } from "@/context/ThemeContext";
+import { usePathname, useRouter } from "expo-router";
+import { ChartSpline, Home, List, Plus, Settings2 } from "lucide-react-native";
+import React, { useRef } from "react";
+import { Animated, Platform, Pressable, StyleSheet, View } from "react-native";
 
 const TABS = [
   { key: "home", icon: Home, route: "/" },
@@ -50,31 +50,41 @@ export default function BottomNavigation() {
   const { isDark } = useSystemBars();
 
   return (
-    <View style={[
-      styles.containerWrapper, 
-      { 
-        backgroundColor: colors.background.main,
-        paddingBottom: Platform.OS === 'ios' ? 20 : 0 
-      }
-    ]}>
+    <View
+      style={[
+        styles.containerWrapper,
+        {
+          backgroundColor: colors.background.main,
+          paddingBottom: Platform.OS === "ios" ? 20 : 0,
+        },
+      ]}
+    >
       <LinearGradient
         colors={[colors.gradients.transparent, colors.background.main]}
         style={styles.gradient}
         pointerEvents="none"
       />
-      <View style={[
-        styles.container, 
-        { 
-          backgroundColor: colors.background.main,
-          borderTopColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', 
-        }
-      ]}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.background.main,
+            borderTopColor: isDark
+              ? "rgba(255,255,255,0.05)"
+              : "rgba(0,0,0,0.05)",
+          },
+        ]}
+      >
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.route;
-          const iconColor = isActive ? colors.text.secondary : colors.text.tertiary;
+          const iconColor = isActive
+            ? colors.text.secondary
+            : colors.text.tertiary;
           const bgStyle =
-            tab.key === "add" ? [styles.addButton, { backgroundColor: colors.primary }] : styles.tabButton;
+            tab.key === "add"
+              ? [styles.addButton, { backgroundColor: colors.primary }]
+              : styles.tabButton;
 
           return (
             <AnimatedTabButton

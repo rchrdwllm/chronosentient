@@ -1,14 +1,14 @@
+import Text from "@/components/Text";
+import { useTheme } from "@/context/ThemeContext";
+import { Trash2 } from "lucide-react-native";
 import React, { useRef } from "react";
 import {
-  View,
-  StyleSheet,
   Animated,
   PanResponder,
   Pressable,
+  StyleSheet,
+  View,
 } from "react-native";
-import Text from "@/components/Text";
-import { Trash2 } from "lucide-react-native";
-import { useTheme } from "@/context/ThemeContext";
 
 export type MoodCardProps = {
   day: string;
@@ -98,25 +98,30 @@ export default function MoodCard({
 
   return (
     <View style={{ position: "relative" }}>
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        styles.trashContainer,
-        {
-          opacity: showTrash,
-          right: 24,
-          transform: [
-            {
-              scale: showTrash.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.7, 1],
-              }),
-            },
-          ],
-        },
-      ]}
-    >
-      <View style={[styles.trashCircle, { backgroundColor: colors.negative, shadowColor: colors.negative }]}>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.trashContainer,
+          {
+            opacity: showTrash,
+            right: 24,
+            transform: [
+              {
+                scale: showTrash.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.7, 1],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.trashCircle,
+            { backgroundColor: colors.negative, shadowColor: colors.negative },
+          ]}
+        >
           <Trash2 color={colors.text.white} size={22} />
         </View>
       </Animated.View>
@@ -132,17 +137,24 @@ export default function MoodCard({
           <View
             style={[
               styles.card,
-              { 
-                backgroundColor: colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
-                shadowColor: colors.shadow 
-              }
+              {
+                backgroundColor:
+                  colors.background.main === "#1A1A1F" ? "#2D2D35" : "#fff",
+                shadowColor: colors.shadow,
+              },
             ]}
           >
             <View style={[styles.cardHeader]}>
-              <Text weight="bold" style={[styles.day, { color: colors.text.primary }]}>
+              <Text
+                weight="bold"
+                style={[styles.day, { color: colors.text.primary }]}
+              >
                 {day}
               </Text>
-              <Text numberOfLines={1} style={[styles.text, { color: colors.text.tertiary }]}>
+              <Text
+                numberOfLines={1}
+                style={[styles.text, { color: colors.text.tertiary }]}
+              >
                 {text}
               </Text>
             </View>
@@ -151,7 +163,10 @@ export default function MoodCard({
                 <Text
                   style={[
                     styles.mood,
-                    { color: mood === "Positive" ? colors.primary : colors.negative }
+                    {
+                      color:
+                        mood === "Positive" ? colors.primary : colors.negative,
+                    },
                   ]}
                 >
                   {mood}

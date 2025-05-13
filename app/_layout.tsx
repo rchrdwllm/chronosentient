@@ -1,28 +1,27 @@
-import { Stack } from "expo-router";
+import BottomNavigation from "@/components/BottomNavigation";
+import { FontProvider } from "@/context/FontContext";
+import { ThemeProvider, useSystemBars, useTheme } from "@/context/ThemeContext";
 import {
-  useFonts,
   Inter_400Regular,
   Inter_500Medium,
   Inter_700Bold,
+  useFonts,
 } from "@expo-google-fonts/inter";
-import { SplashScreen } from "expo-router";
-import React, { useEffect } from "react";
-import BottomNavigation from "@/components/BottomNavigation";
-import { View, Platform } from "react-native";
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ThemeProvider, useTheme, useSystemBars } from "@/context/ThemeContext";
-import { FontProvider } from "@/context/FontContext";
+import React, { useEffect } from "react";
+import { View } from "react-native";
 
 function AppLayout() {
   const { colors } = useTheme();
   const { statusBarProps } = useSystemBars();
   const backgroundColor = colors.background.main;
-  
+
   return (
     <View style={{ flex: 1, backgroundColor }}>
-      <StatusBar 
-        backgroundColor={statusBarProps.backgroundColor} 
-        style={statusBarProps.style} 
+      <StatusBar
+        backgroundColor={statusBarProps.backgroundColor}
+        style={statusBarProps.style}
         translucent={statusBarProps.translucent}
       />
       <Stack

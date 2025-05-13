@@ -1,8 +1,8 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
 import Text from "@/components/Text";
-import { useTheme } from "@/context/ThemeContext";
 import { useThemeColors } from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
 export default function BarChart({
   data,

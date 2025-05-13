@@ -1,15 +1,8 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import {
-  Svg,
-  Circle,
-  Defs,
-  LinearGradient,
-  Stop,
-  Text as SvgText,
-} from "react-native-svg";
 import Text from "@/components/Text";
-import { TEXT_LIGHT, useThemeColors } from "@/constants/colors";
+import { useThemeColors } from "@/constants/colors";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { Circle, Defs, LinearGradient, Stop, Svg } from "react-native-svg";
 
 // Generate a unique ID for each gradient
 const generateUniqueId = () =>

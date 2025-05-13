@@ -1,19 +1,19 @@
-import React, { useState, useMemo } from "react";
-import { View, StyleSheet, Animated, Pressable, TextInput } from "react-native";
 import Text from "@/components/Text";
-import { useRouter } from "expo-router";
-import { ChevronLeft, Check } from "lucide-react-native";
 import {
   BACKGROUND_MAIN,
-  TEXT_SECONDARY,
-  PRIMARY,
-  TEXT_PRIMARY,
-  TEXT_LIGHT,
-  TEXT_TERTIARY,
   BACKGROUND_TRANSPARENT,
+  PRIMARY,
   SHADOW_COLOR,
+  TEXT_LIGHT,
+  TEXT_PRIMARY,
+  TEXT_SECONDARY,
+  TEXT_TERTIARY,
 } from "@/constants/colors";
 import { useJournalStore } from "@/stores/journalStore";
+import { useRouter } from "expo-router";
+import { Check, ChevronLeft } from "lucide-react-native";
+import React, { useMemo, useState } from "react";
+import { Animated, Pressable, StyleSheet, TextInput, View } from "react-native";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import vader from "vader-sentiment";
@@ -144,7 +144,7 @@ export default function AddScreen() {
       ) : (
         <>
           <Text weight="bold" style={styles.prompt}>
-            Anong ganap mo today, fella?
+            Share your thoughts for today...
           </Text>
           <TextInput
             style={styles.textInput}

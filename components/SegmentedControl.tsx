@@ -1,12 +1,12 @@
-import React, { useRef, useEffect } from "react";
+import { useTheme } from "@/context/ThemeContext";
+import React, { useEffect, useRef } from "react";
 import {
-  View,
-  Pressable,
-  StyleSheet,
   Animated,
   LayoutChangeEvent,
+  Pressable,
+  StyleSheet,
+  View,
 } from "react-native";
-import { useTheme } from "@/context/ThemeContext";
 
 const SEGMENTS = ["Week", "Month"];
 
@@ -67,11 +67,11 @@ export default function SegmentedControl({
   };
 
   return (
-    <View 
+    <View
       style={[
-        styles.segmentedContainer, 
-        { backgroundColor: theme === 'dark' ? "#3A3A42" : "#ECECEC" }
-      ]} 
+        styles.segmentedContainer,
+        { backgroundColor: theme === "dark" ? "#3A3A42" : "#ECECEC" },
+      ]}
       onLayout={onLayout}
     >
       {segmentWidth > 0 && (
@@ -81,7 +81,7 @@ export default function SegmentedControl({
             {
               width: segmentWidth - 4,
               transform: [{ translateX: indicatorX }, { scale }],
-              backgroundColor: theme === 'dark' ? "#2D2D35" : "#fff",
+              backgroundColor: theme === "dark" ? "#2D2D35" : "#fff",
             },
           ]}
         />
