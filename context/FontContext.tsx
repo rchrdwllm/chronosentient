@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Define scale factors for text sizes
 const FONT_SCALE_NORMAL = 1.0;
-const FONT_SCALE_LARGE = 1.3;
+const FONT_SCALE_LARGE = 1.5;
 
 // Define the shape of our font context
 type FontContextType = {
@@ -20,21 +20,25 @@ const FontContext = createContext<FontContextType>({
 });
 
 // Font preference key for AsyncStorage
-const LARGE_TEXT_PREFERENCE_KEY = '@large_text_preference';
+const LARGE_TEXT_PREFERENCE_KEY = "@large_text_preference";
 
-export const FontProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isLargeTextEnabled, setIsLargeTextEnabled] = useState(false);
-  
+
   // Load saved preferences from AsyncStorage on mount
   useEffect(() => {
     const loadFontPreferences = async () => {
       try {
-        const storedLargeTextPreference = await AsyncStorage.getItem(LARGE_TEXT_PREFERENCE_KEY);
+        const storedLargeTextPreference = await AsyncStorage.getItem(
+          LARGE_TEXT_PREFERENCE_KEY
+        );
         if (storedLargeTextPreference !== null) {
-          setIsLargeTextEnabled(storedLargeTextPreference === 'true');
+          setIsLargeTextEnabled(storedLargeTextPreference === "true");
         }
       } catch (error) {
-        console.error('Failed to load font preferences:', error);
+        console.error("Failed to load font preferences:", error);
       }
     };
 
@@ -45,9 +49,12 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const saveFontPreferences = async () => {
       try {
-        await AsyncStorage.setItem(LARGE_TEXT_PREFERENCE_KEY, String(isLargeTextEnabled));
+        await AsyncStorage.setItem(
+          LARGE_TEXT_PREFERENCE_KEY,
+          String(isLargeTextEnabled)
+        );
       } catch (error) {
-        console.error('Failed to save font preferences:', error);
+        console.error("Failed to save font preferences:", error);
       }
     };
 

@@ -1,13 +1,13 @@
-import React from "react";
-import { Text as RNText, TextProps as RNTextProps } from "react-native";
+import { useThemeColors } from "@/constants/colors";
+import { useFont } from "@/context/FontContext";
 import {
-  useFonts,
   Inter_400Regular,
   Inter_500Medium,
   Inter_700Bold,
+  useFonts,
 } from "@expo-google-fonts/inter";
-import { TEXT_PRIMARY, useThemeColors } from "@/constants/colors";
-import { useFont } from "@/context/FontContext";
+import React from "react";
+import { Text as RNText, TextProps as RNTextProps } from "react-native";
 
 export type TextProps = RNTextProps & {
   weight?: "regular" | "medium" | "bold";
@@ -36,8 +36,8 @@ export default function Text({
     weight === "bold"
       ? "Inter_700Bold"
       : weight === "medium"
-        ? "Inter_500Medium"
-        : "Inter_400Regular";
+      ? "Inter_500Medium"
+      : "Inter_400Regular";
 
   // Apply font scale to the base font size
   const applyFontScale = (style: any): any => {
